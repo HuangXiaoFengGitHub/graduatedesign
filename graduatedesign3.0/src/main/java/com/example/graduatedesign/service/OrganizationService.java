@@ -1,12 +1,14 @@
-package com.example.test1.demo.service;
+package com.example.graduatedesign.service;
 
-import com.example.test1.demo.Model.Organization;
-import com.example.test1.demo.dao.OrganizationRepository;
-import com.example.test1.demo.service.serviceImp.OrganizationImp;
+
+import com.example.graduatedesign.Model.Organization;
+import com.example.graduatedesign.dao.OrganizationRepository;
+import com.example.graduatedesign.service.serviceImp.OrganizationImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
 @Service
 public class OrganizationService implements OrganizationImp {
     @Autowired

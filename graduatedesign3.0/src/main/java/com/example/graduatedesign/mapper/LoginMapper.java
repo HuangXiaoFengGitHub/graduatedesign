@@ -1,16 +1,12 @@
-package com.example.test1.demo.mapper;
+package com.example.graduatedesign.mapper;
 
-import com.example.test1.demo.Model.Login;
-import com.example.test1.demo.Model.LoginExample;
-import java.util.List;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.ResultMap;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.SelectKey;
-import org.apache.ibatis.annotations.Update;
+
+import com.example.graduatedesign.Model.Login;
+import com.example.graduatedesign.Model.LoginExample;
+import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.session.RowBounds;
+
+import java.util.List;
 
 public interface LoginMapper {
     /**

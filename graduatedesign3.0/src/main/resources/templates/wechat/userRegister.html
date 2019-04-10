@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>表单</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--因为额外引入了webjars-locator，所以相关静态资源的引入可省略版本号便于升级-->
+    <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
+    <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+<!--<link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>-->
+    <!--引入页面提示工具-->
+    <script th:src="@{/build/toastr.min.js}"></script>
+    <link th:href="@{/build/toastr.css}" rel="stylesheet" />
+    <link th:href="@{/build/toastr.min.css}" rel="stylesheet" />
+
+    <link rel="stylesheet" href="//g.alicdn.com/msui/sm/0.6.2/css/sm.min.css">
+    <link rel="stylesheet" href="//g.alicdn.com/msui/sm/0.6.2/css/sm-extend.min.css">
+</head>
+<body>
+<header class="bar bar-nav">
+    <h1 class='title'>用户注册</h1>
+</header>
+<div class="content">
+    <div class="list-block">
+        <ul>
+            <!-- Text inputs -->
+            <li>
+                <div class="item-content">
+                    <div class="item-media"><i class="icon icon-form-name"></i></div>
+                    <div class="item-inner">
+                        <div class="item-title label">姓名</div>
+                        <div class="item-input">
+                            <input type="text" id="userName" name="userName" placeholder="Your name">
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="item-content">
+                    <div class="item-media"><i class="icon icon-form-name"></i></div>
+                    <div class="item-inner">
+                        <div class="item-title label">昵称</div>
+                        <div class="item-input">
+                            <input type="text" id="nickName" name="nickName" placeholder="Your name">
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="item-content">
+                    <div class="item-media"><i class="icon icon-form-email"></i></div>
+                    <div class="item-inner">
+                        <div class="item-title label">邮箱</div>
+                        <div class="item-input">
+                            <input type="email" id="email" name="email" placeholder="E-mail">
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="item-content">
+                    <div class="item-media"><i class="icon icon-form-email"></i></div>
+                    <div class="item-inner">
+                        <div class="item-title label">学号</div>
+                        <div class="item-input">
+                            <input type="text" id="studentNumber" name="studentNumber" placeholder="studentNumber">
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="item-content">
+                    <div class="item-media"><i class="icon icon-form-email"></i></div>
+                    <div class="item-inner">
+                        <div class="item-title label">电话</div>
+                        <div class="item-input">
+                            <input type="text" id="phone" name="phone" placeholder="phone">
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="item-content">
+                    <div class="item-media"><i class="icon icon-form-password"></i></div>
+                    <div class="item-inner">
+                        <div class="item-title label">密码</div>
+                        <div class="item-input">
+                            <input type="password" placeholder="Password" id="password" name="password" class="">
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="item-content">
+                    <div class="item-media"><i class="icon icon-form-password"></i></div>
+                    <div class="item-inner">
+                        <div class="item-title label">确认密码</div>
+                        <div class="item-input">
+                            <input type="password" placeholder="确认密码" class="">
+                        </div>
+                    </div>
+                </div>
+            </li>
+
+            <li>
+                <div class="item-content">
+                    <div class="item-media"><i class="icon icon-form-file"></i></div>
+                    <div class="item-inner">
+                        <div class="item-title label">头像</div>
+                        <div class="item-input">
+                            <input type="file" id="profile" name="profile" class="">
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="item-content">
+                    <div class="item-media"><i class="icon icon-form-gender"></i></div>
+                    <div class="item-inner">
+                        <div class="item-title label">性别</div>
+                        <div class="item-input">
+                            <select id="gender" name="gender">
+                                <option>Male</option>
+                                <option>Female</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="item-content">
+                    <div class="item-media"><i class="icon icon-form-gender"></i></div>
+                    <div class="item-inner">
+                        <div class="item-title label">年级</div>
+                        <div class="item-input">
+                            <select id="grade" name="grade">
+                                <option>2015</option>
+                                <option>2016</option>
+                                <option>2017</option>
+                                <option>2018</option>
+                                <option>teacher</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="item-content">
+                    <div class="item-media"><i class="icon icon-form-gender"></i></div>
+                    <div class="item-inner">
+                        <div class="item-title label">学院</div>
+                        <div class="item-input">
+                            <select id="academy" name="academy">
+                                <option>智能科学与工程学院</option>
+                                <option>国际商学院</option>
+                                <option>人文学院</option>
+                                <option>翻译学院</option>
+                                <option>包装工程学院</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="item-content">
+                    <div class="item-media"><i class="icon icon-form-gender"></i></div>
+                    <div class="item-inner">
+                        <div class="item-title label">专业</div>
+                        <div class="item-input">
+                            <select id="major" name="major">
+                                <option>物联网工程</option>
+                                <option>电子信息科学与技术</option>
+                                <option>法学</option>
+                                <option>文化产业管理</option>
+                                <option>隔壁老黄专业</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <!-- Date -->
+            <li>
+                <div class="item-content">
+                    <div class="item-media"><i class="icon icon-form-calendar"></i></div>
+                    <div class="item-inner">
+                        <div class="item-title label">生日</div>
+                        <div class="item-input">
+                            <input type="date" id="birthday" name="birthday" placeholder="Birth day" value="2014-04-30">
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <!-- Switch (Checkbox) -->
+            <li>
+                <div class="item-content">
+                    <div class="item-media"><i class="icon icon-form-toggle"></i></div>
+                    <div class="item-inner">
+                        <div class="item-title label">是否本校学生</div>
+                        <div class="item-input">
+                            <label class="label-switch">
+                                <input type="checkbox" id="isStudent" name="isStudent">
+                                <div class="checkbox"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="align-top">
+                <div class="item-content">
+                    <div class="item-media"><i class="icon icon-form-comment"></i></div>
+                    <div class="item-inner">
+                        <div class="item-title label">个人简介</div>
+                        <div class="item-input">
+                            <textarea id="userDesc" name="userDesc"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <!---验证码-->
+            <li>
+                <div class="item-content">
+                    <div class="item-media">
+                        <i class="icon icon-form-email"></i>
+                    </div>
+                    <div class="item-inner">
+                        <label for="j_captcha" class="item-title label">验证码</label> <input
+                            id="j_captcha" name="j_captcha" type="text"
+                            class="form-control in" placeholder="验证码" />
+                        <div class="item-input">
+                            <img id="captcha_img" alt="点击更换" title="点击更换"
+                                 onclick="changeVerifyCode(this)" src="../Kaptcha" />
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="content-block">
+        <div class="row">
+            <div class="col-50"><a href="#" class="button button-big button-fill button-danger">返回</a></div>
+            <div class="col-50"><a href="#" class="button button-big button-fill button-success" id="submit">提交</a></div>
+        </div>
+    </div>
+</div>
+<!--通过cdn获取静态资源-->
+<script type='text/javascript' src='//g.alicdn.com/sj/lib/zepto/zepto.min.js' charset='utf-8'></script>
+<script type='text/javascript' src='//g.alicdn.com/msui/sm/0.6.2/js/sm.min.js' charset='utf-8'></script>
+<script type='text/javascript' src='//g.alicdn.com/msui/sm/0.6.2/js/sm-extend.min.js' charset='utf-8'></script>
+<!--载入项目自定义的资源-->
+<script type='text/javascript'
+        th:src='@{/js/wechat/userRegister.js}'
+        charset='utf-8'></script>
+<script type='text/javascript'
+        th:src='@{/js/common/commonutil.js}' charset='utf-8'></script>
+</body>
+</html>

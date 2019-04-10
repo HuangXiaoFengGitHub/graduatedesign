@@ -5,10 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Calendar;
 
@@ -19,11 +16,12 @@ import java.util.Calendar;
 @Entity(name="t_manager_organization")
 public class ManagerOrganization implements Serializable {
     @Id
-    @ManyToOne()
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="user_id")
     private User user; //外键
-    @Id
-    @ManyToOne()
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="organization_id")
     private Organization organization; //外键
     private int grade;//审核等级

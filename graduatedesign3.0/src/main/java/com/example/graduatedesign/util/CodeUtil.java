@@ -1,4 +1,4 @@
-package com.example.test1.demo.util;
+package com.example.graduatedesign.util;
 
 import javax.servlet.http.HttpServletRequest;
 

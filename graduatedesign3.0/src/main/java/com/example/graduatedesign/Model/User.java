@@ -1,12 +1,9 @@
 package com.example.graduatedesign.Model;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
-
 import javax.persistence.*;
 import java.util.*;
-
 @Builder
 @Entity(name="t_user")
 @AllArgsConstructor
@@ -17,8 +14,9 @@ import java.util.*;
 @Setter
 @ToString
 public class User {
+    //IdClass(User.class)
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long userId;
     private String nickName;
     private String userName;
@@ -27,6 +25,7 @@ public class User {
     private String gender;
     private String grade;
     private String studentNumber;
+    private String password;
     private String major;
     private String phone;
     private String email;
@@ -43,7 +42,7 @@ public class User {
     private int isBan;
     @OneToMany(mappedBy = "user",cascade=CascadeType.ALL,fetch = FetchType.EAGER)//管理关系
     private List<ManagerOrganization> managerOrganizations;
-    //用户私信相关
+   // 用户私信相关
     @OneToMany(mappedBy ="user" ,cascade = CascadeType.ALL,fetch=FetchType.EAGER)
     private Set<PrivateMessage> privateMessages;
     @OneToMany(mappedBy ="friend",cascade = CascadeType.ALL,fetch=FetchType.EAGER )

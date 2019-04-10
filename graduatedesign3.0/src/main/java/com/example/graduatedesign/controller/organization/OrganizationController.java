@@ -1,13 +1,14 @@
-package com.example.test1.demo.web.controller.organization;
+package com.example.graduatedesign.controller.organization;
 
-import com.example.test1.demo.Model.Organization;
-import com.example.test1.demo.Model.User;
-import com.example.test1.demo.service.OrganizationService;
-import com.example.test1.demo.service.UserService;
-import com.example.test1.demo.util.HttpServletRequestUtil;
+import com.example.graduatedesign.Model.ManagerOrganization;
+import com.example.graduatedesign.Model.Organization;
+import com.example.graduatedesign.Model.User;
+import com.example.graduatedesign.service.ManagerOrganizationService;
+import com.example.graduatedesign.service.OrganizationService;
+import com.example.graduatedesign.service.UserService;
+import com.example.graduatedesign.util.HttpServletRequestUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,21 +24,19 @@ public class OrganizationController {
     @Autowired
     OrganizationService organizationService;
     @Autowired
+    ManagerOrganizationService managerOrganizationService;
+    @Autowired
     UserService userService;
     @RequestMapping("/index")
-    private String index()
+    public String index()
     {
         return "organization/organizationIndex";
     }
     @RequestMapping("/toRegister")
-    private String toRegister(Model model)
+    public String toRegister(Model model)
     {
         List<Organization> topOrganizations=organizationService.findTop(0L);
-        User user=new User();
-        Organization organization=new Organization();
-        model.addAttribute("hxf",topOrganizations);
-        model.addAttribute("organization",organization);
-        model.addAttribute("user",user);
+        model.addAttribute("hxf2",topOrganizations);
         return "organization/organizationRegister";
     }
     @RequestMapping("/register")
@@ -56,7 +55,8 @@ public class OrganizationController {
         User teacher2=userService.findUserByName(teacher);
         if(teacher2!=null)
         {
-
+            ManagerOrganization managerOrganization= ManagerOrganization.builder().organization(organization).user(teacher2).grade(1).createTime(Calendar.getInstance()).build();
+            managerOrganizationService.save(managerOrganization);
         }
         //设置插入时间
         organization.setCreateTime(Calendar.getInstance());
@@ -64,6 +64,4 @@ public class OrganizationController {
         organizationService.save(organization);
         return "redirect:/organization/index";
     }
-
-
 }

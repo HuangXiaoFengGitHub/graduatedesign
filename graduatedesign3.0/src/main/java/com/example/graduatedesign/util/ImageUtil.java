@@ -1,4 +1,4 @@
-package com.example.test1.demo.util;
+package com.example.graduatedesign.util;
 
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
@@ -20,7 +20,7 @@ public class ImageUtil {
 		String extension = getFileExtension(thumbnail); //获取文件扩展名
 		makeDirPath(targetAddr);  //创建目录
 		String relativeAddr = targetAddr + realFileName + extension; //获得相对路径
-		File dest = new File(FileUtil.getImgBasePath() + relativeAddr); //创建目标文件des
+		File dest = new File(FileUtil.getImgBasePath() + relativeAddr); //创建目标文件des，基本路径+相对路径，数据库存储的是相对路径即可
 		try {
 			Thumbnails.of(thumbnail.getInputStream()).size(200, 200).outputQuality(0.25f).toFile(dest); //压缩成缩略图
 		} catch (IOException e) {

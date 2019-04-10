@@ -1,4 +1,4 @@
-package com.example.test1.demo.web.controller.frontent;
+package com.example.graduatedesign.controller.frontent;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;

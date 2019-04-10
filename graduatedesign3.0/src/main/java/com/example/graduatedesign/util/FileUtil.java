@@ -1,4 +1,4 @@
-package com.example.test1.demo.util;
+package com.example.graduatedesign.util;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -15,7 +15,7 @@ public class FileUtil {
 		String os = System.getProperty("os.name");
 		String basePath = "";
 		if (os.toLowerCase().startsWith("win")) {
-			basePath = "D:/projectdev/image/"; //图片目录存放文件最好放在项目目录之外
+			basePath = "D:/graduateDesign/Image/"; //图片目录存放文件最好放在项目目录之外
 		} else {
 			basePath = "/home/xiangzepro/";
 		}
@@ -36,7 +36,7 @@ public class FileUtil {
 	}
 	
 	public static String getPersonInfoImagePath() {
-		String personInfoImagePath = "/upload/images/item/personinfo/";
+		String personInfoImagePath = "/upload/images/item/userinfo/";
 		personInfoImagePath = personInfoImagePath.replace("/", seperator);
 		return personInfoImagePath;
 	}

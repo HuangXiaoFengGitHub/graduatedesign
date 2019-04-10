@@ -1,6 +1,8 @@
-package com.example.test1.demo.service.serviceImp;
+package com.example.graduatedesign.service.serviceImp;
 
-import com.example.test1.demo.Model.Organization;
+
+
+import com.example.graduatedesign.Model.Organization;
 
 import java.util.List;
 
