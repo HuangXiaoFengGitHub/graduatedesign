@@ -3,8 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <title>组织管理活动首页</title>
+    <link th:href="@{/layui/css/layui.css}" rel="stylesheet" />
+    <link rel="stylesheet" th:href="@{/css/bootstrap.css}">
 </head>
-<body>
-你好，欢迎来到组织管理首页！
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+<!--头部-->
+<div th:replace="organization/common::head"></div>
+<!--侧边栏-->
+<div th:replace="organization/common::side"></div>
+<!--内容主体-->
+<div class="layui-body" id="body">
+    <!-- 内容主体区域 -->
+    <h2 style="padding: 15px;">活动整体情况</h2>
+    <div class="layui-row">
+
+            <div class="layui-col-xs12 layui-col-sm6 layui-col-md6">
+                    <hr>关注人数</hr>
+                    <p>4</p>
+            </div>
+
+
+            <div class="layui-col-xs12 layui-col-sm6 layui-col-md6">
+                <hr>待审核</hr>
+                <p>4</p>
+            </div>
+
+
+            <div class="layui-col-xs12 layui-col-sm6 layui-col-md6">
+                <hr>正在进行</hr>
+                <p>4</p>
+            </div>
+
+
+            <div class="layui-col-xs12 layui-col-sm6 layui-col-md6">
+                <hr>已经举办</hr>
+                <p>4</p>
+            </div>
+
+
+            <div class="layui-col-xs12 layui-col-sm6 layui-col-md6">
+                <hr>成员数</hr>
+                <p>4</p>
+
+    </div>
+    <hr class="layui-bg-black">
+    <div class="layui-row" style="margin-top: 50px;text-align: center;">
+        <fieldset class="layui-elem-field site-demo-button" style="margin-top: 30px;">
+            <div>
+                <button class="layui-btn">申请活动</button>
+                <button class="layui-btn layui-btn-normal">创建活动</button>
+            </div>
+        </fieldset>
+    </div>
+
+</div>
+<!--底部-->
+<div th:replace="organization/common::foot"></div>
+</div>
+<script th:src="@{/layui/layui.js}"></script>
+<script>
+    //JavaScript代码区域
+    layui.use('element', function() {
+        var element = layui.element;
+
+    });
+</script>
 </body>
 </html>

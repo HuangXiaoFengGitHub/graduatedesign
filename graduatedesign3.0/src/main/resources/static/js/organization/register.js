@@ -62,9 +62,10 @@ $(function() {
 			success : function(data) { //接受到后台返回的data信息，这里要实现定义一个后台
 				if (data.success) {
 					toastr.info('提交成功！');
-					window.location.href = '/myo2o/shop/ownerlogin';
+					window.location.href = '/user/toLogin';
 				} else {
 					toastr.info('提交失败！');
+					window.location.href='/user/toRegister'
 					$('#captcha_img').click();
 				}
 			}
@@ -72,6 +73,6 @@ $(function() {
 	});
 
 	$('#back').click(function() {
-		window.location.href = '/myo2o/shop/ownerlogin';
+		window.location.href = '/user/index';
 	});
 });

@@ -62,6 +62,10 @@ $(function() {
 		formData.append('thumbnail', thumbnail);//传输参数
 		formData.append('user', JSON.stringify(user)); //传送参数
 		var verifyCodeActual = $('#j_captcha').val(); //接收验证码，验证码的控件id是j_captcha
+		if (!thumbnail) {
+			toastr.info('请上传头像！');
+			return;
+		}
 		if (!verifyCodeActual) {
 			toastr.info('请输入验证码！');
 			return;
@@ -79,8 +83,10 @@ $(function() {
 				if (data.success) {
 					toastr.info('提交成功！');
 					window.location.href = '/user/toLogin';
-				} else {
+				}
+				else {
 					toastr.info('提交失败！');
+					window.location.href ='/user/index';
 					$('#captcha_img').click();
 				}
 			}
@@ -88,6 +94,6 @@ $(function() {
 	});
 
 	$('#back').click(function() {
-		window.location.href = '/user/toLogin';
+		window.location.href = '/user/index';
 	});
 });

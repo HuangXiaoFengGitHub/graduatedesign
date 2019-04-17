@@ -25,4 +25,11 @@ public class OrganizationService implements OrganizationImp {
     {
         organizationRepository.save(organization);
     }
+    public Organization checkLogin(String email,String password)
+    {
+        return organizationRepository.findByEmailAndPassword(email, password);
+    }
+    public List<Organization> findByOrganizationName(String organizationName){
+        return organizationRepository.findByOrganizationName(organizationName);
+    }
 }

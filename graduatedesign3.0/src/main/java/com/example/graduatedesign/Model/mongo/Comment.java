@@ -21,7 +21,7 @@ public class Comment {
     private ObjectId _id;    //插入mongo时会自动生成_id，如果不加这个字段则会把id属性当成_id
     @Field
     private Long commentId;
-    private String commentType;
+    private String commentType; //留言，活动评论，学校通知
     private Long userId;
     private Long activityId;
     private Long organizationId;

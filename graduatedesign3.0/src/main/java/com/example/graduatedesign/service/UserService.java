@@ -8,15 +8,17 @@ import com.example.graduatedesign.enums.UserStateEnum;
 import com.example.graduatedesign.service.serviceImp.UserServiceImp;
 import com.example.graduatedesign.util.FileUtil;
 import com.example.graduatedesign.util.ImageUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import sun.security.provider.MD5;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
+@Slf4j
 @Service
 public class UserService implements UserServiceImp {
     @Autowired
@@ -34,12 +36,13 @@ public class UserService implements UserServiceImp {
         return userRepostory.findAll();
     }
     @Override
-    public UserExecution register(User user, CommonsMultipartFile profileImg)
+    public UserExecution register(User user, MultipartFile profileImg)
     {
         //将图片存入文件
         //获取存入路径
         //将User对象存入数据库
-        if (user == null || user.getUserName() == null) {
+        log.info("begin register:");
+        if (user == null || user.getPassword() == null) {
             return new UserExecution(UserStateEnum.NULL_AUTH_INFO);
         }
         try {
@@ -55,6 +58,7 @@ public class UserService implements UserServiceImp {
                     }
                 }
             long effectedNum = this.save(user);
+            log.info("effectedNum:"+effectedNum+"");
             if (effectedNum <= 0) {
                 throw new RuntimeException("帐号创建失败");
             } else {
@@ -65,9 +69,14 @@ public class UserService implements UserServiceImp {
                     + e.getMessage());
         }
     }
-    private void addProfileImg(User user,CommonsMultipartFile profileImg) {
+    private void addProfileImg(User user,MultipartFile profileImg) {
+        log.info("begin add profileImg:");
         String dest = FileUtil.getPersonInfoImagePath();//"/upload/images/item/userinfo/";
         String profileImgAddr = ImageUtil.generateThumbnail(profileImg, dest);//创建文件，获取文件名
         user.setProfile(profileImgAddr);
+        log.info("profile dir:"+user.getProfile());
+    }
+    public User checkLogin(String username, String password) {
+        return userRepostory.findByUserNameAndPassword(username, password);
     }
 }

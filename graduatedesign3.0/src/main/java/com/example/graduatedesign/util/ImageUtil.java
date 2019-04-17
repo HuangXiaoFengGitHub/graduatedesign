@@ -1,6 +1,7 @@
 package com.example.graduatedesign.util;
 
 import net.coobird.thumbnailator.Thumbnails;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import java.io.File;
@@ -15,7 +16,7 @@ public class ImageUtil {
 	 * @param targetAddr 图片地址（存放路径）
 	 * @return
      */
-	public static String generateThumbnail(CommonsMultipartFile thumbnail, String targetAddr) {
+	public static String generateThumbnail(MultipartFile thumbnail, String targetAddr) {
 		String realFileName = FileUtil.getRandomFileName(); //获取随机名
 		String extension = getFileExtension(thumbnail); //获取文件扩展名
 		makeDirPath(targetAddr);  //创建目录
@@ -73,7 +74,7 @@ public class ImageUtil {
 		}
 	}
 
-	private static String getFileExtension(CommonsMultipartFile cFile) {
+	private static String getFileExtension(MultipartFile cFile) {
 		String originalFileName = cFile.getOriginalFilename();
 		return originalFileName.substring(originalFileName.lastIndexOf("."));
 	}

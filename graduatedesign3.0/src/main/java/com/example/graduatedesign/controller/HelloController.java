@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 
 @Controller
+@RequestMapping("/hello")
 public class HelloController {
     @Autowired
     OrganizationService organizationService;
@@ -30,5 +31,16 @@ public class HelloController {
     public String layui()
     {
         return "test/layuiTest";
+    }
+    @RequestMapping("/layuiform")
+    public String layui2()
+    {
+        return "test/layuiformtest";
+    }
+
+    @RequestMapping("/error2")
+    private String error2()
+    {
+        return "common/error";
     }
 }

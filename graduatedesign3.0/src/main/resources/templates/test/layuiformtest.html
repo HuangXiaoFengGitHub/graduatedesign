@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>组织管理活动首页</title>
+    <link th:href="@{/layui/css/layui.css}" rel="stylesheet" />
+<!--    <link rel="stylesheet" th:href="@{/css/bootstrap.css}">-->
+    <link th:href="@{/layui/css/layui.css}" rel="stylesheet" />
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}"/>
+    <link th:href="@{/css/font-awesome.min.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/common.css}" rel="stylesheet" type="text/css"/>
+    <!--    <link rel="stylesheet" th:href="@{/css/bootstrap.css}">-->
+    <script th:src="@{/layui/layui.js}"></script>
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <!--头部-->
+    <div th:replace="organization/common::head"></div>
+    <!--侧边栏-->
+    <div th:replace="organization/common::side"></div>
+    <!--内容主体-->
+    <div class="layui-body" id="body">
+        <div class="layui-container" id="content">
+            <div class="layui-row" style="margin-top: 10px;">
+                <div id="cont" class="layui-col-xs12 layui-col-sm12 layui-col-md12 smaller">
+                    <fieldset class="layui-elem-field layui-field-title">
+                        <legend>欢迎注册</legend>
+                        <div class="layui-field-box">
+                            <form class="layui-form" action="/organization/apply">
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">用户名：</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="username" required="required" onblur="checkUsername()"
+                                               lay-verify="required" placeholder="请输入用户名"
+                                               autocomplete="off" class="layui-input"/>
+                                    </div>
+                                </div>
+
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">密码：</label>
+                                    <div class="layui-input-block">
+                                        <input type="password" name="password" required="required" lay-verify="required"
+                                               placeholder="请输入密码"
+                                               autocomplete="off" class="layui-input"/>
+                                    </div>
+                                </div>
+
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">姓名：</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="name" required="required" lay-verify="required"
+                                               placeholder="请输您的姓名"
+                                               autocomplete="off" class="layui-input"/>
+                                    </div>
+                                </div>
+
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">电话：</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="phone" required="required" lay-verify="required|phone"
+                                               placeholder="请输您的联系电话"
+                                               autocomplete="off" class="layui-input"/>
+                                    </div>
+                                </div>
+
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">邮箱：</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="email" required="required" lay-verify="required|email"
+                                               placeholder="请输您的邮箱地址"
+                                               autocomplete="off" class="layui-input"/>
+                                    </div>
+                                </div>
+
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">详细地址：</label>
+                                    <div class="layui-input-block">
+                                        <textarea name="addr" placeholder="请输入您的地址" class="layui-textarea"></textarea></div>
+                                </div>
+
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">活动名称</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="activityName" id="activityName" lay-verify="title" autocomplete="off" placeholder="请输入标题" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">活动地点</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="place" id="place" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+
+                                <div class="layui-form-item">
+                                    <!--                <div class="layui-inline">-->
+                                    <!--                    <label class="layui-form-label">多规则验证</label>-->
+                                    <!--                    <div class="layui-input-inline">-->
+                                    <!--                        <input type="text" name="number" lay-verify="required|number" autocomplete="off" class="layui-input">-->
+                                    <!--                    </div>-->
+                                    <!--                </div>-->
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label">开始时间</label>
+                                        <div class="layui-input-inline">
+                                            <input type="date" name="startTime" id="startTime" lay-verify="date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label">结束时间</label>
+                                        <div class="layui-input-inline">
+                                            <input type="date" name="endTime" id="endTime" lay-verify="date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="layui-form-item">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label">活动经费</label>
+                                        <div class="layui-input-inline" style="width: 100px;">
+                                            <input type="text" name="price_min" placeholder="￥" autocomplete="off" class="layui-input">
+                                        </div>
+                                        <div class="layui-form-mid">-</div>
+                                        <div class="layui-input-inline" style="width: 100px;">
+                                            <input type="text" name="price_max" placeholder="￥" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">活动类型</label>
+                                    <div class="layui-input-block">
+                                        <select name="interest" lay-filter="aihao">
+                                            <option value=""></option>
+                                            <option value="0">志愿活动</option>
+                                            <option value="1">学科竞赛</option>
+                                            <option value="2">学术讲座</option>
+                                            <option value="3">社团活动</option>
+                                            <option value="4">兴趣爱好</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">活动标签</label>
+                                    <div class="layui-input-block">
+                                        <input type="checkbox" name="like[write]" title="写作">
+                                        <input type="checkbox" name="like[read]" title="阅读" checked="">
+                                        <input type="checkbox" name="like[game]" title="游戏">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item" pane="">
+                                    <label class="layui-form-label">原始复选框</label>
+                                    <div class="layui-input-block">
+                                        <input type="checkbox" name="like1[write]" lay-skin="primary" title="写作" checked="">
+                                        <input type="checkbox" name="like1[read]" lay-skin="primary" title="阅读">
+                                        <input type="checkbox" name="like1[game]" lay-skin="primary" title="游戏" disabled="">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item layui-form-text">
+                                    <label class="layui-form-label">活动简介</label>
+                                    <div class="layui-input-block">
+                                        <textarea placeholder="请输入内容" class="layui-textarea" id="activityDesc"></textarea>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item layui-form-text">
+                                    <label class="layui-form-label">编辑器</label>
+                                    <div class="layui-input-block">
+                                        <textarea class="layui-textarea layui-hide" name="content" lay-verify="content" id="LAY_demo_editor"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="layui-form-item">
+                                    <div class="layui-input-block">
+                                        <button id="commit" class="layui-btn layui-btn-lg layui-btn-radius layui-btn-danger"
+                                                lay-submit="lay-submit" lay-filter="formReg">注册
+                                        </button>
+                                        <button type="reset" class="layui-btn layui-btn-lg layui-btn-radius layui-btn-primary">
+                                            重置
+                                        </button>
+                                    </div>
+                                </div>
+                                <button type="button" class="layui-btn" id="test3"><i class="layui-icon"></i>上传策划书</button>
+                            </form>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+            <script>
+                // 加载layui form模块
+                layui.use(['form', 'layedit', 'laydate'], function(){
+                    var form = layui.form
+                        ,layer = layui.layer
+                        ,layedit = layui.layedit
+                        ,laydate = layui.laydate;
+
+
+                    //日期
+                    laydate.render({
+                        elem: '#date'
+                    });
+                    laydate.render({
+                        elem: '#date1'
+                    });
+
+                    //创建一个编辑器
+                    var editIndex = layedit.build('LAY_demo_editor');
+
+                    //自定义验证规则
+                    form.verify({
+                        title: function(value){
+                            if(value.length < 5){
+                                return '标题至少得5个字符啊';
+                            }
+                        }
+                        ,pass: [
+                            /^[\S]{6,12}$/
+                            ,'密码必须6到12位，且不能出现空格'
+                        ]
+                        ,content: function(value){
+                            layedit.sync(editIndex);
+                        }
+                    });
+
+                    //监听指定开关
+                    form.on('switch(switchTest)', function(data){
+                        layer.msg('开关checked：'+ (this.checked ? 'true' : 'false'), {
+                            offset: '6px'
+                        });
+                        layer.tips('温馨提示：请注意开关状态的文字可以随意定义，而不仅仅是ON|OFF', data.othis)
+                    });
+
+                    //监听提交
+                    form.on('submit(demo1)', function(data){
+                        layer.alert(JSON.stringify(data.field), {
+                            title: '最终的提交信息'
+                        })
+                        return false;
+                    });
+                });
+                // 移动设备显示优化
+                var device = layui.device();
+                if (device.weixin || device.ios || device.android) {
+                    $("#cont").removeClass("smaller");
+                }
+                //文件上传
+                layui.use('upload', function(){
+                    var $ = layui.jquery
+                        ,upload = layui.upload;
+                    //普通图片上传
+                    //多图片上传
+                    //指定允许上传的文件类型
+                    upload.render({
+                        elem: '#test3'
+                        ,url: '/upload/'
+                        ,accept: 'file' //普通文件
+                        ,done: function(res){
+                            console.log(res)
+                        }
+                    });
+                    //设定文件大小限制
+                    //同时绑定多个元素，并将属性设定在元素上
+                    //选完文件后不自动上传
+                    //拖拽上传
+                    //多文件列表示例
+                    //绑定原始文件域
+                });
+            </script>
+            <script>
+                layui.use('upload', function(){
+                    var $ = layui.jquery
+                        ,upload = layui.upload;
+
+                    //普通图片上传
+
+
+                    //多图片上传
+
+
+                    //指定允许上传的文件类型
+                    upload.render({
+                        elem: '#test3'
+                        ,url: '/upload/'
+                        ,accept: 'file' //普通文件
+                        ,done: function(res){
+                            console.log(res)
+                        }
+                    });
+                    //设定文件大小限制
+                    //同时绑定多个元素，并将属性设定在元素上
+                    //选完文件后不自动上传
+                    //拖拽上传
+                    //多文件列表示例
+                    //绑定原始文件域
+                });
+            </script>
+        </div>
+    </div>
+    <!--底部-->
+    <div th:replace="organization/common::foot"></div>
+</div>
+<script th:src="@{/layui/layui.js}"></script>
+<script>
+    //JavaScript代码区域
+    layui.use('element', function() {
+        var element = layui.element;
+
+    });
+</script>
+</body>
+</html>

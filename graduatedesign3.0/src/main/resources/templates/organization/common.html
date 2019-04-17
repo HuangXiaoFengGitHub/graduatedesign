@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>校园活动管理系统</title>
+    <link th:href="@{/layui/css/layui.css}" rel="stylesheet" />
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header" id="head" th:fragment="head">
+        <div class="layui-logo">组织活动管理系统</div>yy
+        <!-- 头部区域（可配合layui已有的水平导航） -->
+        <ul class="layui-nav layui-layout-left">
+            <li class="layui-nav-item"><a href="/organization/index">首页</a></li>
+            <li class="layui-nav-item"><a href="">用户中心<span class="layui-badge">9</span></a></li>
+            <li class="layui-nav-item"><a href="">报名中心<span class="layui-badge">99</span></a></li>
+            <li class="layui-nav-item"><a href="javascript:;">其它系统</a>
+                <dl class="layui-nav-child">
+                    <dd>
+                        <a href="">审核管理</a>
+                    </dd>
+                    <dd>
+                        <a href="">授权管理</a>
+                    </dd>
+                </dl></li>
+        </ul>
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item">
+                <a href="javascript:;">
+                    <i class="fa fa-user-circle"></i>&nbsp;
+                    <span th:if="${session.organization == null}">请登陆</span>
+                    <span th:if="${session.organization != null}" th:text="'欢迎您!&nbsp;' + ${session.organization.organizationName}">请登陆</span>
+                </a>
+                <dl class="layui-nav-child">
+                    <!--后台方法-->
+                    <dd th:if="${session.organization != null}"><a href="/mall/user/logout.do"><i class="fa fa-sign-out"></i> 退出登录</a></dd>
+                    <dd th:if="${session.organization != null}"><a href="/mall/order/toList.html"><i class="fa fa-list"></i> 基本资料</a></dd>
+                    <dd th:if="${session.organization != null}"><a href="/mall/product/toCart.html"><i class="fa fa-shopping-cart"></i> 隐私设置</a></dd>
+                    <dd th:if="${session.organization != null}"><a href="/mall/product/toCart.html"><i class="fa fa-shopping-cart"></i> 绑定设置</a></dd>
+                    <dd th:if="${session.organization == null}"><a href="/organization/toLogin"><i class="fa fa-sign-in"></i> 登录</a></dd>
+                    <dd th:if="${session.organization == null}"><a th:href="@{/organization/toRegister}"><i class="fa fa-user-plus"></i> 注册</a></dd>
+                </dl>
+            </li>
+            <li class="layui-nav-item"><a href="javascript:;"> 勤工助学 </a>
+                <dl class="layui-nav-child">
+                    <dd>
+                        <a href="">基本资料</a>
+                    </dd>
+                    <dd>
+                        <a href="">隐私设置</a>
+                    </dd>
+                    <dd>
+                        <a href="">绑定设置</a>
+                    </dd>
+                </dl></li>
+            <li class="layui-nav-item"><a href="">退出</a></li>
+        </ul>
+    </div>
+<!--侧边栏-->
+    <div class="layui-side layui-bg-black" id="side" th:fragment="side">
+        <div class="layui-side-scroll">
+            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+            <ul class="layui-nav layui-nav-tree" lay-filter="test">
+                <li class="layui-nav-item"><a href="javascript:;">活动管理</a>
+                    <dl class="layui-nav-child">
+                        <dd>
+                            <a href="/organization/toApply">活动申请</a>
+                        </dd>
+                        <dd>
+                            <a href="/organization/toCompose">活动发布</a>
+                        </dd>
+<!--                        <dd>-->
+<!--                            <a href="javascript:;">正在举办</a>-->
+<!--                        </dd>-->
+                    </dl>
+                </li>
+                <li class="layui-nav-item"><a href="javascript:;">消息管理<span class="layui-badge">9</span></a>
+                    <dl class="layui-nav-child">
+                        <dd>
+                            <a href="/organization/messageDetail?type=1">留言</a>
+                        </dd>
+                        <dd>
+                            <a href="/organization/activityComment">活动评论</a>
+                        </dd>
+                        <dd>
+                            <a href="/organization/messageDetail?type=2">系统通知</a>
+                        </dd>
+                        <dd>
+                            <a href="javascript:;">群发短信</a>
+                        </dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item"><a href="javascript:;">公告管理</a>
+                    <dl class="layui-nav-child">
+                        <dd>
+                            <a href="/organization/toPostNotice">发公告</a>
+                        </dd>
+                        <dd>
+                            <a href="/organization/noticeDetail">已发布</a>
+                        </dd>
+<!--                        <dd>-->
+<!--                            <a href="javascript:;">待发布</a>-->
+<!--                        </dd>-->
+                    </dl>
+                </li>
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="" href="javascript:;">统计分析</a>
+                    <dl class="layui-nav-child">
+                        <dd>
+                            <a href="javascript:;">用户分析</a>
+                        </dd>
+                        <dd>
+                            <a href="javascript:;">活动分析</a>
+                        </dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item"><a href="javascript:;">文章或者素材管理</a>
+                    <dl class="layui-nav-child">
+                        <dd>
+                            <a href="javascript:;">发公告</a>
+                        </dd>
+                        <dd>
+                            <a href="javascript:;">已发布</a>
+                        </dd>
+                        <dd>
+                            <a href="javascript:;">待发布</a>
+                        </dd>
+                    </dl>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="layui-body" id="body">
+        <!-- 内容主体区域 -->
+        <div style="padding: 15px;">内容主体区域</div>
+    </div>
+
+    <div class="layui-footer" id="foot" th:fragment="foot">
+        <!-- 底部固定区域 -->
+        © 校园活动管理系统--2015 物联网工程 黄晓峰
+    </div>
+</div>
+<script th:src="@{/layui/layui.js}"></script>
+<script>
+    //JavaScript代码区域
+    layui.use('element', function() {
+        var element = layui.element;
+
+    });
+</script>
+</body>
+</html>
