@@ -5,6 +5,67 @@
  */
 //从函数开头
 $(function() {
+	// var shopId = getQueryString('shopId');//从URL中获取shopId
+	//
+	// var isEdit = shopId ? true : false;
+	//
+	// var shopInfoUrl = '/myo2o/shop/getshopbyid?shopId=1';
+	// // var shopInfoUrl = '/myo2o/shop/getshopbyid?shopId=' + shopId;
+	// var initUrl = '/myo2o/shop/getshopinitinfo';
+	// var editShopUrl = '/myo2o/shop/registershop';
+	// if (isEdit) {
+	// 	editShopUrl = '/myo2o/shop/modifyshop';
+	// }
+	//
+	// function getInfo(shopId) {
+	// 	$.getJSON(shopInfoUrl, function(data) {
+	// 		if (data.success) {
+	// 			var shop = data.shop;
+	// 			$('#shop-name').val(shop.shopName);
+	// 			$('#shop-addr').val(shop.shopAddr);
+	// 			$('#shop-phone').val(shop.phone);
+	// 			$('#shop-desc').val(shop.shopDesc);
+	// 			var shopCategory = '<option data-id="'
+	// 				+ shop.shopCategory.shopCategoryId + '" selected>'
+	// 				+ shop.shopCategory.shopCategoryName + '</option>';
+	// 			var tempAreaHtml = '';
+	// 			data.areaList.map(function(item, index) {
+	// 				tempAreaHtml += '<option data-id="' + item.areaId + '">'
+	// 					+ item.areaName + '</option>';
+	// 			});
+	// 			$('#shop-category').html(shopCategory);
+	// 			$('#shop-category').attr('disabled','disabled');
+	// 			$('#area').html(tempAreaHtml);
+	// 			$('#area').attr('data-id',shop.areaId);
+	// 		}
+	// 	});
+	// }
+	//
+	// function getCategory() {
+	// 	$.getJSON(initUrl, function(data) {
+	// 		if (data.success) {
+	// 			var tempHtml = '';
+	// 			var tempAreaHtml = '';
+	// 			data.shopCategoryList.map(function(item, index) {
+	// 				tempHtml += '<option data-id="' + item.shopCategoryId
+	// 					+ '">' + item.shopCategoryName + '</option>';
+	// 			});
+	// 			data.areaList.map(function(item, index) {
+	// 				tempAreaHtml += '<option data-id="' + item.areaId + '">'
+	// 					+ item.areaName + '</option>';
+	// 			});
+	// 			$('#shop-category').html(tempHtml);
+	// 			$('#shop-category').removeAttr('disabled');
+	// 			$('#area').html(tempAreaHtml);
+	// 		}
+	// 	});
+	// }
+	//
+	// if (isEdit) {
+	// 	getInfo(shopId);
+	// } else {
+	// 	getCategory();
+	// }
 	toastr.options = {
 
 		"closeButton": false, //是否显示关闭按钮
@@ -86,8 +147,9 @@ $(function() {
 				}
 				else {
 					toastr.info('提交失败！');
+					toastr.info(data.success)
 					//toastr.info(data);
-					window.location.href ='/user/editResult';
+					window.location.href ='/user/registerResult';
 					$('#captcha_img').click();//每次注册完之后更换一下验证码
 				}
 			}

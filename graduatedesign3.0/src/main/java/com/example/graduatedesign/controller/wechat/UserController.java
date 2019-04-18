@@ -25,6 +25,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,27 +44,34 @@ public class UserController {
         return "wechat/userRegister";
     }
 
+
     /**
      * 注册
-     * @param model
+     * @param
      * @param request
      * @return
      */
     @RequestMapping("/register")
-    public String register(@RequestParam("thumbnail") MultipartFile profileImg, Model model, HttpServletRequest request)
+    @ResponseBody
+    public Map<String,Object> register(@RequestParam("thumbnail") MultipartFile profileImg,Model model, HttpServletRequest request)
     {
-//        if (!CodeUtil.checkVerifyCode(request)) {
-//            model.addAttribute("success", false);
-//            model.addAttribute("errMsg", "输入了错误的验证码");
-//            return model;
-//        }
+
         //获取user对象，图片对象，和验证码对象
+        Map<String,Object> map=new HashMap<>();
+        map.put("success",false);
+        if (!CodeUtil.checkVerifyCode(request)) {
+            model.addAttribute("success", false);
+            model.addAttribute("errMsg", "输入了错误的验证码");
+            log.info("验证码错误");
+            return map;
+        }
         String userStr= HttpServletRequestUtil.getString(request,"user");
         log.info(userStr);
         if(profileImg.isEmpty())
         {
             model.addAttribute("message", "Please select a file to upload");
-            return "wechat/userRegisterResult";
+           // return "wechat/userRegisterResult";
+            return map;
         }
         log.info("upload succesfully!");
 //        MultipartHttpServletRequest multipartRequest=null;
@@ -89,7 +97,8 @@ public class UserController {
         } catch (IOException e) {
             model.addAttribute("success",false);
             model.addAttribute("errMsg",e.toString());
-            return "wechat/userRegisterResult";
+         //   return "wechat/userRegisterResult";
+            return map;
         }
         if(user!=null && user.getPassword()!=null  )
         {
@@ -105,7 +114,8 @@ public class UserController {
             } catch (RuntimeException e) {
                 model.addAttribute("success", false);
                 model.addAttribute("errMsg", e.toString());
-                return "wechat/userRegisterResult";
+        //        return "wechat/userRegisterResult";
+                return map;
             }
         }
         else
@@ -113,7 +123,8 @@ public class UserController {
             model.addAttribute("success",false);
             model.addAttribute("errMsg","请输入注册信息");
         }
-        return "wechat/userRegisterResult";
+        //return "wechat/userRegisterResult";
+        return map;
     }
     @RequestMapping("/toLogin")
     public String toLogin()
@@ -139,6 +150,69 @@ public class UserController {
             //     throw new LoginException("登录失败！ 邮箱或者密码错误");
         }
     }
+    @RequestMapping("/toUserEdit")
+    public String toUserEdit()
+    {
+        return "user/userEdit";
+    }
+    @RequestMapping("/userEdit")
+    public Map<String,Object> userEdit(@RequestParam("thumbnail") MultipartFile profileImg,Model model, HttpServletRequest request)
+    {
+        Map<String,Object> map=new HashMap<>();
+        //1,首先检查验证码
+        if(!CodeUtil.checkVerifyCode(request))
+        {
+            map.put("success",false);
+            map.put("errMsg","验证码错误");
+            return map;
+        }
+//        // 检查图片
+//        if(profileImg.isEmpty())
+//        {
+//            map.put("success",false);
+//            map.put("errMsg","验证码错误");
+//            return map;
+//        }
+        //2，获取原来的用户
+        User newUser;
+        String userStr=HttpServletRequestUtil.getString(request,"userStr");
+        try {
+            newUser=objectMapper.readValue(userStr,User.class);
+        } catch (IOException e) {
+            map.put("success",false);
+            map.put("errMsg",e.toString());
+            return map;
+        }
+        if(newUser!=null)
+        {
+            try {
+                //从session中获取原来的user
+                User currentUser = (User) request.getSession().getAttribute("user");
+                newUser.setUserId(currentUser.getUserId());
+                //3，修改用户信息
+                UserExecution le = userService.modifyUser(newUser, profileImg);
+                if (le.getStateInfo() == UserStateEnum.SUCCESS.getStateInfo()) {
+                    map.put("success", true);
+                } else {
+                    map.put("success", false);
+                    map.put("errMsg", le.getStateInfo());
+                }
+            }
+            catch (Exception e)
+            {
+                map.put("success",false);
+                map.put("errMsg",e.toString());
+            }
+        }
+        else
+        {
+            map.put("success",false);
+            map.put("errMsg","修改信息为空");
+            return map;
+        }
+        return map;
+    }
+
 
     @RequestMapping("/index")
     public String index() {
@@ -176,6 +250,11 @@ public class UserController {
             return new ResultBean<>(true);
         }
         return new ResultBean<>(false);
+    }
+    @RequestMapping("/registerResult")
+    public String loginResult()
+    {
+        return "wechat/userRegisterResult";
     }
 
 }

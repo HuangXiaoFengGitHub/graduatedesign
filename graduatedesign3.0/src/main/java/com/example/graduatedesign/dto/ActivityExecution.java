@@ -2,7 +2,7 @@ package com.example.graduatedesign.dto;
 
 
 import com.example.graduatedesign.Model.Activity;
-import com.example.graduatedesign.enums.ActivityStateEnum;
+import com.example.graduatedesign.enums.ActivityState;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -32,7 +32,7 @@ public class ActivityExecution {
     private List<Activity> shopList;
 
     // 店铺操作失败的时候使用的构造器
-    public ActivityExecution(ActivityStateEnum stateEnum) {
+    public ActivityExecution(ActivityState stateEnum) {
         this.state = stateEnum.getState();
         this.stateInfo = stateEnum.getStateInfo();
     }

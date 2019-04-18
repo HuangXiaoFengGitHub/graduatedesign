@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-
+//数据传输对象，user+其他属性
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

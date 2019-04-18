@@ -11,6 +11,7 @@ import com.example.graduatedesign.util.ImageUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import sun.security.provider.MD5;
@@ -36,6 +37,7 @@ public class UserService implements UserServiceImp {
         return userRepostory.findAll();
     }
     @Override
+    @Transactional
     public UserExecution register(User user, MultipartFile profileImg)
     {
         //将图片存入文件
@@ -65,7 +67,7 @@ public class UserService implements UserServiceImp {
                 return new UserExecution(UserStateEnum.SUCCESS,user);
             }
         } catch (Exception e) {
-            throw new RuntimeException("insertLocalAuth error: "
+            throw new RuntimeException("insertUser error: "
                     + e.getMessage());
         }
     }
@@ -78,5 +80,44 @@ public class UserService implements UserServiceImp {
     }
     public User checkLogin(String username, String password) {
         return userRepostory.findByUserNameAndPassword(username, password);
+    }
+    @Transactional
+    public UserExecution modifyUser(User user,MultipartFile profileImg)
+    {
+        log.info("begin modify:");
+        //非空判断
+        if(user==null)
+        {
+            return new UserExecution(UserStateEnum.NULL_AUTH_INFO);
+        }
+        //判断是否需要修改图片，先把原来的图片删除，再插入新的图片
+        //
+        try {
+           if (!profileImg.isEmpty()) {
+               User tempUser = userRepostory.findByUserId(user.getUserId());
+               String relativePath = tempUser.getProfile();
+               log.info(relativePath);
+               FileUtil.deleteFile(relativePath);
+               try {
+                   addProfileImg(user, profileImg);
+               } catch (Exception e) {
+                   throw new RuntimeException("addShopImg error: "
+                           + e.getMessage());
+               }
+           }
+           //2,更新用户信息
+           user.setUpdateTime(Calendar.getInstance());
+           long effectNum = this.save(user);
+           log.info("effectNum:" + effectNum);
+           if (effectNum <= 0) {
+               throw new RuntimeException("帐号创建失败");
+           } else {
+               return new UserExecution(UserStateEnum.SUCCESS, user);
+           }
+       }
+        catch (Exception e)
+        {
+            throw new RuntimeException("修改用户失败："+e.getMessage());
+        }
     }
 }

@@ -1,36 +1,36 @@
 package com.example.graduatedesign.Model;
 
 
-import com.example.graduatedesign.enums.ActivityCategory;
-import com.example.graduatedesign.enums.ActivityStateEnum;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.example.graduatedesign.enums.ActivityState;
+import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
+import java.util.*;
 
 @Builder
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "t_activity")
+@ToString
 public class Activity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long activityId;
     private String activityName;
+    @Column(nullable = true)
     private int priority;
     @ManyToOne
     @JoinColumn(name="organization_id")
     private Organization organization; //外键
-    @Enumerated(EnumType.STRING)
+//    @Enumerated(EnumType.STRING)
+//   private ActivityCategory category;
+    @ManyToOne(cascade=CascadeType.ALL)
+    @JoinColumn(name = "category_id")
     private ActivityCategory category;
     @Enumerated(EnumType.STRING)
-    private ActivityStateEnum status;
+    private ActivityState status;
     @Column(columnDefinition = "longtext")
     private String articleDesc;
     @ManyToOne
@@ -60,4 +60,8 @@ public class Activity {
     private List<User> users=new ArrayList<>();
     @ManyToMany(mappedBy = "likeActivities",cascade = CascadeType.ALL)
     private List<User> likeUsers=new ArrayList<>();
+    //标签
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name="t_activity_tags",joinColumns = @JoinColumn(name="activity_id",referencedColumnName = "activityId"),inverseJoinColumns = @JoinColumn(name="tag_id",referencedColumnName = "tagId"))
+    private Set<Tags> tags=new HashSet<>();
 }

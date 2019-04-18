@@ -6,9 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
+import java.util.*;
 
 @Entity(name="t_tags")
 @Data
@@ -23,7 +21,9 @@ public class Tags {
     private Calendar createTime;
     private Calendar updateTime;
     @ManyToMany(mappedBy = "tags")
-    private List<User> users=new ArrayList<>();
+    private Set<User> users=new HashSet<>();
     @ManyToMany(mappedBy = "tags")
-    private List<Organization> organizations=new ArrayList<>();
+    private Set<Organization> organizations=new HashSet<>();
+    @ManyToMany(mappedBy = "tags")
+    private Set<Activity> activities=new HashSet<>();
 }

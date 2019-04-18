@@ -43,8 +43,9 @@ public class OrganizationController {
     @RequestMapping("/toRegister")
     public String toRegister(Model model)
     {
+        //将父组织信息返回给前台
         List<Organization> topOrganizations=organizationService.findTop(0L);
-        model.addAttribute("hxf2",topOrganizations);
+        model.addAttribute("hxf2",topOrganizations);//通过model返回给前台
         return "organization/organizationRegister";
     }
     @RequestMapping("/toLogin")
@@ -74,7 +75,8 @@ public class OrganizationController {
     private String register(HttpServletRequest request, Organization organization)
     {
         //获取父组织
-        String parentName= HttpServletRequestUtil.getString(request,"parent");
+        String parentName= HttpServletRequestUtil.getString(request,"parent2");//后台直接获取form的name值即可
+        log.info(parentName);
         log.info(organization.getPassword());
         List<Organization> parent=organizationService.findParent(parentName);
         if(parent.size()>0)
@@ -93,7 +95,7 @@ public class OrganizationController {
         organization.setCreateTime(Calendar.getInstance());
         //插入数据库
         organizationService.save(organization);
-        return "redirect:/organization/index";
+        return "redirect:/organization/toLogin";
     }
     /**
      * 登出

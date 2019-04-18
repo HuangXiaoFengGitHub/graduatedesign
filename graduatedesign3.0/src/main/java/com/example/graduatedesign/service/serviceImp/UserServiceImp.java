@@ -14,4 +14,5 @@ public interface UserServiceImp {
     public List<User> getUserList();
     public UserExecution register(User user, MultipartFile profileImg);
 //    public void addProfileImg(User user, CommonsMultipartFile profileImg);
+    public UserExecution modifyUser(User user,MultipartFile profileImg);
 }

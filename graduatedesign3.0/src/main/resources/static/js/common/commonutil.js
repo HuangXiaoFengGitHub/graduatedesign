@@ -32,5 +32,5 @@ function getQueryString(name) {
 }
 //更改验证码的方法
 function changeVerifyCode(img) {
-	img.src = "../Kaptcha?" + Math.floor(Math.random() * 100);
+	img.src = "/tool/kaptcha?" + Math.floor(Math.random() * 100);
 }

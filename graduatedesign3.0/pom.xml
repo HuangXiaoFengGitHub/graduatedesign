@@ -229,7 +229,7 @@
         <artifactId>commons-io</artifactId>
         <version>2.5</version>
         </dependency>
-
+        <!--验证码工具引入 Kaptcha-->
         <!-- https://mvnrepository.com/artifact/com.github.penggle/kaptcha 验证码工具 -->
         <dependency>
             <groupId>com.github.penggle</groupId>
