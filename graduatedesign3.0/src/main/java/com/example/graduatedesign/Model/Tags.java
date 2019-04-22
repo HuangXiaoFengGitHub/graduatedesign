@@ -1,15 +1,14 @@
 package com.example.graduatedesign.Model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.*;
 
 @Entity(name="t_tags")
-@Data
+@Getter
+@Setter
+@ToString(exclude = "users")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,6 +16,7 @@ public class Tags {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long tagId;
+    private int priority; //优先级
     private String tagName;
     private Calendar createTime;
     private Calendar updateTime;

@@ -12,4 +12,5 @@ public interface OrganizationImp {
     List<Organization> findParent(String name);
     public void save(Organization organization);
     Organization checkLogin(String email,String password);
+    List<Organization> findOrganizationsByName(String name);
 }

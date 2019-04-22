@@ -5,7 +5,7 @@
  */
 //从函数开头
 $(function() {
-	// var shopId = getQueryString('shopId');//从URL中获取shopId
+	var userId = getQueryString('userId');//从URL中获取shopId
 	//
 	// var isEdit = shopId ? true : false;
 	//
@@ -93,6 +93,7 @@ $(function() {
 	var registerUrl = '/user/userEdit';//后台方法,在controller层中实现，并写出对应的mappering
 	$('#submit').click(function() { //点击提交的时候响应，获取提交的内容，表单提交的属性id是“submit”
 		var user = {};//变量，json对象
+		user.userId=userId; //获取要编辑的userid
 		//var personInfo = {};//变量，一个json对象
 		user.userName = $('#userName').val();//前端规定的控件名字userName
 		//localAuth.password = $('#password').val();//前端规定的控件名字password
@@ -157,6 +158,6 @@ $(function() {
 	});
 
 	$('#back').click(function() {
-		window.location.href = '/user/index';
+		window.location.href = '/wechat/index';
 	});
 });

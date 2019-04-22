@@ -1,9 +1,14 @@
 package com.example.graduatedesign.controller.wechat;
-import com.example.graduatedesign.Model.Organization;
+import com.example.graduatedesign.Model.Account;
+import com.example.graduatedesign.Model.Activity;
+import com.example.graduatedesign.Model.Tags;
 import com.example.graduatedesign.Model.User;
 import com.example.graduatedesign.Model.pojo.ResultBean;
+import com.example.graduatedesign.dto.Result;
 import com.example.graduatedesign.dto.UserExecution;
 import com.example.graduatedesign.enums.UserStateEnum;
+import com.example.graduatedesign.service.AccountService;
+import com.example.graduatedesign.service.TagsService;
 import com.example.graduatedesign.service.UserService;
 import com.example.graduatedesign.util.CodeUtil;
 import com.example.graduatedesign.util.HttpServletRequestUtil;
@@ -12,14 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
-import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -28,6 +27,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Slf4j
 @Controller
@@ -37,14 +37,15 @@ public class UserController {
     ObjectMapper objectMapper;
     @Resource
     UserService userService;
-
+    @Autowired
+    AccountService accountService;
+    @Autowired
+    TagsService tagsService;
     @RequestMapping("/toRegister")
     public String toRegister()
     {
         return "wechat/userRegister";
     }
-
-
     /**
      * 注册
      * @param
@@ -55,7 +56,6 @@ public class UserController {
     @ResponseBody
     public Map<String,Object> register(@RequestParam("thumbnail") MultipartFile profileImg,Model model, HttpServletRequest request)
     {
-
         //获取user对象，图片对象，和验证码对象
         Map<String,Object> map=new HashMap<>();
         map.put("success",false);
@@ -142,7 +142,7 @@ public class UserController {
         if (user != null) {
             //登录成功 重定向到首页
             request.getSession().setAttribute("user", user);
-            response.sendRedirect("/user/index");
+            response.sendRedirect("/wechat/index");
         } else {
             log.info("登录失败");
             request.getSession().setAttribute("error","登录失败，邮箱或者密码错误");
@@ -212,13 +212,6 @@ public class UserController {
         }
         return map;
     }
-
-
-    @RequestMapping("/index")
-    public String index() {
-        return "wechat/userIndex";
-    }
-
     @RequestMapping("/list")
     //传入model对象，让前端可以使用User对象
     public String list(Model model) {
@@ -227,13 +220,15 @@ public class UserController {
         return "wechat/list";
     }
 
+
+
     /**
      * 登出
      */
-    @RequestMapping("/logout.do")
+    @RequestMapping("/logout")
     public void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
         request.getSession().removeAttribute("user");
-        response.sendRedirect("/wechat/userIndex.html");
+        response.sendRedirect("/wechat/toLogin");
     }
 
 
@@ -255,6 +250,26 @@ public class UserController {
     public String loginResult()
     {
         return "wechat/userRegisterResult";
+    }
+    /**
+     * 判断是否有绑定账号
+     * @param request
+     * @param userId
+     * @return
+     */
+    private boolean hasAccountBind(HttpServletRequest request, long userId) {
+        if (request.getSession().getAttribute("bindAccount") == null) {
+            User user=userService.findUserByUserId(userId);
+            Account localAuth = accountService.findAccountByUser(user);
+            if (localAuth != null && localAuth.getUser() != null) {
+                request.getSession().setAttribute("bindAccount", localAuth);
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return true;
+        }
     }
 
 }

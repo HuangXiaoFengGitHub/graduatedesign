@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html  lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>我关注的活动</title>
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+        <link rel="shortcut icon" href="/favicon.ico">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <link rel="stylesheet" href="//g.alicdn.com/msui/sm/0.6.2/css/sm.min.css">
+        <link rel="stylesheet" href="//g.alicdn.com/msui/sm/0.6.2/css/sm-extend.min.css">
+        <link rel="stylesheet" th:href="@{/css/wechat/shoplist.css}">
+        <!--因为额外引入了webjars-locator，所以相关静态资源的引入可省略版本号便于升级-->
+        <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
+        <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+        <!--<link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>-->
+        <!--引入页面提示工具-->
+        <script th:src="@{/build/toastr.min.js}"></script>
+        <link th:href="@{/build/toastr.css}" rel="stylesheet" />
+        <link th:href="@{/build/toastr.min.css}" rel="stylesheet" />
+
+    </head>
+<body>
+    <header class="bar bar-nav">
+        <h1 class="title">关注活动列表</h1>
+    </header>
+    <div class="content">
+        <div class="content-block">
+        	<p>你好,<span id="user-name"></span></p>
+            <div class="row row-shop">
+                <div class="col-40">活动名称</div>
+                <div class="col-40">活动时间</div>
+                <div class="col-20">详情</div>
+            </div>
+            <!---这里的样式shop-wrap是自定义的样式,在shoplist.css中-->
+            <div class="shop-wrap">
+
+            </div>
+        </div>
+        <div class="content-block">
+			<div class="row">
+				<div class="col-50">
+					<a href="/user/detail/myActivity" id="log-out"
+						class="button button-big button-fill button-danger">返回</a>
+				</div>
+                <div class="col-50">
+                    <a href="/wechat/index" class="button button-big button-fill button-success">首页</a>
+                </div>
+			</div>
+		</div>
+    </div>
+
+    <script type='text/javascript' src='//g.alicdn.com/sj/lib/zepto/zepto.min.js' charset='utf-8'></script>
+    <script type='text/javascript' src='//g.alicdn.com/msui/sm/0.6.2/js/sm.min.js' charset='utf-8'></script>
+    <script type='text/javascript' src='//g.alicdn.com/msui/sm/0.6.2/js/sm-extend.min.js' charset='utf-8'></script>
+    <script type='text/javascript' th:src='@{/js/wechat/likeActivityList.js}' charset='utf-8'></script>
+</body>
+</html>

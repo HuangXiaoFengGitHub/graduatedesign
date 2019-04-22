@@ -8,6 +8,7 @@
     <link rel="shortcut icon" href="/favicon.ico">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--公共资源--->
     <!--因为额外引入了webjars-locator，所以相关静态资源的引入可省略版本号便于升级-->
     <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
     <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
@@ -16,9 +17,11 @@
     <script th:src="@{/build/toastr.min.js}"></script>
     <link th:href="@{/build/toastr.css}" rel="stylesheet" />
     <link th:href="@{/build/toastr.min.css}" rel="stylesheet" />
+    <script type='text/javascript' th:src='@{/js/common/commonutil.js}' charset='utf-8'></script>
 
     <link rel="stylesheet" href="//g.alicdn.com/msui/sm/0.6.2/css/sm.min.css">
     <link rel="stylesheet" href="//g.alicdn.com/msui/sm/0.6.2/css/sm-extend.min.css">
+    <script type="text/javascript" th:src='@{/js/wechat/commonJs.js}' charset='utf-8'></script>
 </head>
 <body>
 <header class="bar bar-nav">
@@ -255,7 +258,6 @@
 <script type='text/javascript'
         th:src='@{/js/wechat/userRegister.js}'
         charset='utf-8'></script>
-<script type='text/javascript'
-        th:src='@{/js/common/commonutil.js}' charset='utf-8'></script>
+
 </body>
 </html>

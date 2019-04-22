@@ -120,7 +120,7 @@ public class OrganizationController {
         }
         return new ResultBean<>(false);
     }
-
+    //申请活动
     @RequestMapping("/toApply")
     public String toApply()
     {
@@ -132,6 +132,7 @@ public class OrganizationController {
         log.info("活动申请：");
         return "redirect:/organization/index";
     }
+    //发布活动
     @RequestMapping("/toCompose")
     public String toCompose()
     {

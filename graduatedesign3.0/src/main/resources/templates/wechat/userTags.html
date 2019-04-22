@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>标签管理</title>
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+        <link rel="shortcut icon" href="/favicon.ico">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <link rel="stylesheet" href="//g.alicdn.com/msui/sm/0.6.2/css/sm.min.css">
+        <link rel="stylesheet" href="//g.alicdn.com/msui/sm/0.6.2/css/sm-extend.min.css">
+        <link rel="stylesheet" th:href="@{/css/wechat/productcategorymanage.css}">
+        <link rel="stylesheet" th:href="@{/css/jquery-confirm.min.css}">
+<!--        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">-->
+<!--        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>-->
+        <!--公共资源--->
+        <!--因为额外引入了webjars-locator，所以相关静态资源的引入可省略版本号便于升级-->
+        <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
+        <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+        <!--<link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>-->
+        <!--引入页面提示工具-->
+        <script th:src="@{/build/toastr.min.js}"></script>
+        <link th:href="@{/build/toastr.css}" rel="stylesheet" />
+        <link th:href="@{/build/toastr.min.css}" rel="stylesheet" />
+        <script th:src="@{/js/common/jquery-confirm.min.js}"></script>
+        <script type='text/javascript' th:src='@{/js/common/commonutil.js}' charset='utf-8'></script>
+    </head>
+<body>
+    <header class="bar bar-nav">
+        <h1 class="title">个人标签管理</h1>
+    </header>
+    <div class="content">
+        <div class="content-block">
+            <p><span id="error-message"></span></p>
+            <div class="row row-product-category">
+                <div class="col-33">标签名</div>
+                <div class="col-33">优先级</div>
+                <div class="col-33">操作</div>
+            </div>
+            <div class="category-wrap">
+    
+            </div>
+        </div>
+        <div class="content-block">
+            <div class="row">
+                <div class="col-50">
+                    <a href="#" class="button button-big button-fill button-success" id="new">新增</a>
+                </div>
+                <div class="col-50">
+                    <a href="#" class="button button-big button-fill" id="submit">提交</a>
+                </div>
+                <div class="col-100">
+                    <a href="#" class="button button-big button-fill button-danger" id="back">返回</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type='text/javascript' src='//g.alicdn.com/sj/lib/zepto/zepto.min.js' charset='utf-8'></script>
+    <script type='text/javascript' src='//g.alicdn.com/msui/sm/0.6.2/js/sm.min.js' charset='utf-8'></script>
+    <script type='text/javascript' src='//g.alicdn.com/msui/sm/0.6.2/js/sm-extend.min.js' charset='utf-8'></script>
+    <script type='text/javascript' th:src='@{/js/wechat/userTagsmanage.js}' charset='utf-8'></script>
+    <script type="text/javascript" th:src='@{/js/wechat/commonJs.js}' charset='utf-8'></script>
+</body>
+</html>

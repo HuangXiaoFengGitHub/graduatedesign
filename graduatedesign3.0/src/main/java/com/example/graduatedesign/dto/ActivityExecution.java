@@ -25,10 +25,10 @@ public class ActivityExecution {
     // 店铺数量
     private int count;
 
-    // 操作的shop（增删改店铺的时候用）
+    // 操作的shop（增删改活动的时候用）
     private Activity activity;
 
-    // 获取的shop列表(查询店铺列表的时候用)
+    // 获取的活动列表(查询活动列表的时候用)
     private List<Activity> shopList;
 
     // 店铺操作失败的时候使用的构造器
@@ -36,16 +36,15 @@ public class ActivityExecution {
         this.state = stateEnum.getState();
         this.stateInfo = stateEnum.getStateInfo();
     }
-
     // 店铺操作成功使用的构造器
-    public ActivityExecution(ActivityExecution stateEnum, Activity shop) {
+    public ActivityExecution(ActivityState stateEnum, Activity shop) {
         this.state = stateEnum.getState();
         this.stateInfo = stateEnum.getStateInfo();
         this.activity = shop;
     }
 
     // 店铺操作成功使用的构造器
-    public ActivityExecution(ActivityExecution stateEnum, List<Activity> shopList) {
+    public ActivityExecution(ActivityState stateEnum, List<Activity> shopList) {
         this.state = stateEnum.getState();
         this.stateInfo = stateEnum.getStateInfo();
         this.shopList = shopList;

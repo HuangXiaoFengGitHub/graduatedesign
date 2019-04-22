@@ -13,7 +13,7 @@ import java.util.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "t_activity")
-@ToString
+@ToString(exclude = "likeUsers")
 public class Activity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -29,8 +29,8 @@ public class Activity {
     @ManyToOne(cascade=CascadeType.ALL)
     @JoinColumn(name = "category_id")
     private ActivityCategory category;
-    @Enumerated(EnumType.STRING)
-    private ActivityState status;
+   // @Enumerated(EnumType.STRING)
+    private Integer status;
     @Column(columnDefinition = "longtext")
     private String articleDesc;
     @ManyToOne

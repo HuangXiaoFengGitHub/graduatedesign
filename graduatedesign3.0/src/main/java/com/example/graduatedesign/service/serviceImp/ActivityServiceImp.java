@@ -4,7 +4,10 @@ import com.example.graduatedesign.Model.Activity;
 import com.example.graduatedesign.Model.ActivityCategory;
 import com.example.graduatedesign.Model.Organization;
 import com.example.graduatedesign.Model.Tags;
+import com.example.graduatedesign.dto.ActivityExecution;
 import com.example.graduatedesign.enums.ActivityState;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import java.util.Calendar;
 import java.util.List;
@@ -18,4 +21,6 @@ public interface ActivityServiceImp {
     public List<Activity> findActivityByState(ActivityState state);
     public List<Activity> findActivityByOrganization(Organization organization);
     public List<Activity> findActivityByTime(Calendar startTime,Calendar endTime);
+    public ActivityExecution addActivity(Activity activity, MultipartFile activityImg,List<MultipartFile> activityImgs);
+
 }

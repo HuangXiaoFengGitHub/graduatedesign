@@ -41,6 +41,9 @@ public class User {
     private Calendar updateTime;
     private int isManager;
     private int isBan;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="account_id")
+    private Account account;
     @OneToMany(mappedBy = "user",cascade=CascadeType.ALL,fetch = FetchType.EAGER)//管理关系
     private List<ManagerOrganization> managerOrganizations;
    // 用户私信相关

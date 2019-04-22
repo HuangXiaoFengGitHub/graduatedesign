@@ -1,9 +1,15 @@
 package com.example.graduatedesign.service;
 
 
+import com.example.graduatedesign.Model.Activity;
+import com.example.graduatedesign.Model.Organization;
+import com.example.graduatedesign.Model.Tags;
 import com.example.graduatedesign.Model.User;
+import com.example.graduatedesign.dao.ActivityRepository;
 import com.example.graduatedesign.dao.UserRepostory;
+import com.example.graduatedesign.dto.ActivityExecution;
 import com.example.graduatedesign.dto.UserExecution;
+import com.example.graduatedesign.enums.ActivityState;
 import com.example.graduatedesign.enums.UserStateEnum;
 import com.example.graduatedesign.service.serviceImp.UserServiceImp;
 import com.example.graduatedesign.util.FileUtil;
@@ -19,11 +25,15 @@ import sun.security.provider.MD5;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+
 @Slf4j
 @Service
 public class UserService implements UserServiceImp {
     @Autowired
     UserRepostory userRepostory;
+    @Autowired
+    ActivityRepository activityRepository;
     public User findUserByName(String name)
  {
      return userRepostory.findByUserName(name);
@@ -94,7 +104,7 @@ public class UserService implements UserServiceImp {
         //
         try {
            if (!profileImg.isEmpty()) {
-               User tempUser = userRepostory.findByUserId(user.getUserId());
+               User tempUser = userRepostory.findByUserId(user.getUserId());//修改用户，先取出原来的用户
                String relativePath = tempUser.getProfile();
                log.info(relativePath);
                FileUtil.deleteFile(relativePath);
@@ -110,7 +120,7 @@ public class UserService implements UserServiceImp {
            long effectNum = this.save(user);
            log.info("effectNum:" + effectNum);
            if (effectNum <= 0) {
-               throw new RuntimeException("帐号创建失败");
+               throw new RuntimeException("修改失败");
            } else {
                return new UserExecution(UserStateEnum.SUCCESS, user);
            }
@@ -119,5 +129,62 @@ public class UserService implements UserServiceImp {
         {
             throw new RuntimeException("修改用户失败："+e.getMessage());
         }
+    }
+    public  User findUserByUserId(long userId)
+    {
+        return userRepostory.findByUserId(userId);
+    }
+    public Set<Activity> findMyLikeActivity(User user)
+    {
+        User user2=userRepostory.findByUserId(user.getUserId());
+        if(user2!=null)
+            return user2.getLikeActivities();
+        else
+            return null;
+    }
+    public Set<Tags> findMyTags(User user)
+    {
+        User user2=userRepostory.findByUserId(user.getUserId());
+        log.info("user2:"+user2.toString());
+        if(user2!=null)
+        {
+            return user2.getTags();
+        }
+        else
+            return null;
+    }
+    public void addMyTags(User user,List<Tags> tags)
+    {
+        User user1=userRepostory.findByUserId(user.getUserId());
+        user1.getTags().addAll(tags);
+        userRepostory.save(user1);
+    }
+    public  ActivityExecution addMyLikeActivity(User user, long activityId) {
+        Activity activity=activityRepository.findByActivityId(activityId);
+        User user1=userRepostory.findByUserId(user.getUserId());
+        user1.getLikeActivities().add(activity);
+        if(userRepostory.saveAndFlush(user1)!=null)
+        {
+            return new ActivityExecution(ActivityState.SUCCESS,activity);
+        }
+        else
+        {
+            return new ActivityExecution(ActivityState.FAILURE,activity);
+        }
+    }
+    public ActivityExecution addMySignUpActivity(User user,Activity activity) {
+        User user1=userRepostory.findByUserId(user.getUserId());
+        user1.getLikeActivities().add(activity);
+        if(userRepostory.saveAndFlush(user1)!=null)
+        {
+            return new ActivityExecution(ActivityState.SUCCESS,activity);
+        }
+        else
+        {
+            return new ActivityExecution(ActivityState.FAILURE,activity);
+        }
+    }
+    public void addMyLikeOrganization(User user, Organization organization){
+
     }
 }

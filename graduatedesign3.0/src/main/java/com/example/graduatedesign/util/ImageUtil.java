@@ -44,17 +44,24 @@ public class ImageUtil {
 		return relativeAddr;
 	}
 
-	public static List<String> generateNormalImgs(List<CommonsMultipartFile> imgs, String targetAddr) {
+	/**
+	 * 批量生成缩略图
+	 * @param imgs
+	 * @param targetAddr
+	 * @return
+	 */
+	public static List<String> generateNormalImgs(List<MultipartFile> imgs, String targetAddr) {
 		int count = 0;
 		List<String> relativeAddrList = new ArrayList<String>();
 		if (imgs != null && imgs.size() > 0) {
 			makeDirPath(targetAddr);
-			for (CommonsMultipartFile img : imgs) {
+			for (MultipartFile img : imgs) {
 				String realFileName = FileUtil.getRandomFileName();
 				String extension = getFileExtension(img);
 				String relativeAddr = targetAddr + realFileName + count + extension;
 				File dest = new File(FileUtil.getImgBasePath() + relativeAddr);
 				count++;
+				//调整缩略图大小
 				try {
 					Thumbnails.of(img.getInputStream()).size(600, 300).outputQuality(0.5f).toFile(dest);
 				} catch (IOException e) {

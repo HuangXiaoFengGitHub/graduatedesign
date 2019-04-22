@@ -18,9 +18,9 @@ public class ActivityImg {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long imageId;
     @Column(columnDefinition = "text")
-    private String imageAddr;
+    private String imageAddr; //存储地址
     @Column(columnDefinition = "text")
-    private String imageDesc;
+    private String imageDesc; //描述
     private int priority;
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "activity_id")

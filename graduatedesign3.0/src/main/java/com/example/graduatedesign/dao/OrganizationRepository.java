@@ -12,6 +12,13 @@ public interface OrganizationRepository extends JpaRepository<Organization,Long>
 
     List<Organization> findByOrganizationName(String name);
 
+    List<Organization> findByOrganizationNameLike(String name);
+
     Organization findByEmailAndPassword(String email,String password);
+
+    //模糊查询
+    List<Organization> findOrganizationsByOrganizationNameContaining(String name);
+
+    Organization findByOrganizationNameContaining(String name);
 
 }
