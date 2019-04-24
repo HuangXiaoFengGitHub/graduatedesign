@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.Calendar;
 
+//头条轮播图
 @Builder
 @Data
 @AllArgsConstructor
@@ -19,11 +20,11 @@ public class Headline {
     private long headlineId;
     private String headlineName;
     @Column(columnDefinition = "text")
-    private String link;
+    private String link; //连接的URL
     private int status;
     private int priority;
     @Column(columnDefinition = "text")
-    private String imgAddr;
+    private String imgAddr; //对应的图片
     private Calendar createTime;
     private Calendar updateTime;
 }
