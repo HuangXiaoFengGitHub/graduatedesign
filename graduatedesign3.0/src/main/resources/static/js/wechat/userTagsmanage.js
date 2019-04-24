@@ -103,24 +103,58 @@ $(function() {
 	$('.category-wrap').on('click', '.row-product-category.now .delete',
 			function(e) {
 				var target = e.currentTarget;
-				$.confirm('确定么?', function() {
-					$.ajax({
-						url : deleteUrl,
-						type : 'POST',
-						data : {
-							tagId : target.dataset.id,
-							userId : userId
-						},
-						dataType : 'json',
-						success : function(data) {
-							if (data.success) {
-								toastr.info('删除成功！');
-								getList();
-							} else {
-								toastr.info('删除失败！');
+				// $.confirm('确定么?', function() {
+				// 	$.ajax({
+				// 		url : deleteUrl,
+				// 		type : 'POST',
+				// 		data : {
+				// 			tagId : target.dataset.id,
+				// 			userId : userId
+				// 		},
+				// 		dataType : 'json',
+				// 		success : function(data) {
+				// 			if (data.success) {
+				// 				toastr.info('删除成功！');
+				// 				getList();
+				// 			} else {
+				// 				toastr.info('删除失败！');
+				// 			}
+				// 		}
+				// 	});
+				// });
+				$.confirm({
+					title: 'What is up?',
+					content: '确定吗？',
+					type: 'green',
+					buttons: {
+						ok: {
+							text: "ok!",
+							btnClass: 'btn-primary',
+							keys: ['enter'],
+							action: function(){
+								$.ajax({
+									url : deleteUrl,
+									type : 'POST',
+									data : {
+										tagId : target.dataset.id,
+										userId : userId
+									},
+									dataType : 'json',
+									success : function(data) {
+										if (data.success) {
+											toastr.info('删除成功！');
+											getList();
+										} else {
+											toastr.info('删除失败！');
+										}
+									}
+								});
 							}
+						},
+						cancel: function(){
+							console.log('the user clicked cancel');
 						}
-					});
+					}
 				});
 			});
 // 对应删除功能的事件，这里的selector对应是新增的类别

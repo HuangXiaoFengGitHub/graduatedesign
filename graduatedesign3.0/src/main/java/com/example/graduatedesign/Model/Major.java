@@ -1,25 +1,22 @@
 package com.example.graduatedesign.Model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.Set;
 
 @Builder
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "t_major")
+@ToString(exclude = "users")
 public class Major {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long majorId;
     private String majorName;
-//    @OneToMany(mappedBy = "major",cascade = CascadeType.ALL)
-//    private List<User> users;
+    @OneToMany(mappedBy = "major",cascade = CascadeType.ALL)
+    private Set<User> users;
 }

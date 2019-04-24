@@ -22,5 +22,5 @@ public interface ActivityServiceImp {
     public List<Activity> findActivityByOrganization(Organization organization);
     public List<Activity> findActivityByTime(Calendar startTime,Calendar endTime);
     public ActivityExecution addActivity(Activity activity, MultipartFile activityImg,List<MultipartFile> activityImgs);
-
+    public Activity findActivityById(long id);
 }

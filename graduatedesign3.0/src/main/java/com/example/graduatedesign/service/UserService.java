@@ -6,6 +6,7 @@ import com.example.graduatedesign.Model.Organization;
 import com.example.graduatedesign.Model.Tags;
 import com.example.graduatedesign.Model.User;
 import com.example.graduatedesign.dao.ActivityRepository;
+import com.example.graduatedesign.dao.OrganizationRepository;
 import com.example.graduatedesign.dao.UserRepostory;
 import com.example.graduatedesign.dto.ActivityExecution;
 import com.example.graduatedesign.dto.UserExecution;
@@ -15,6 +16,7 @@ import com.example.graduatedesign.service.serviceImp.UserServiceImp;
 import com.example.graduatedesign.util.FileUtil;
 import com.example.graduatedesign.util.ImageUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +36,8 @@ public class UserService implements UserServiceImp {
     UserRepostory userRepostory;
     @Autowired
     ActivityRepository activityRepository;
+    @Autowired
+    OrganizationRepository organizationRepository;
     public User findUserByName(String name)
  {
      return userRepostory.findByUserName(name);
@@ -94,30 +98,46 @@ public class UserService implements UserServiceImp {
     @Transactional
     public UserExecution modifyUser(User user,MultipartFile profileImg)
     {
+        User tempUser = userRepostory.findByUserId(user.getUserId());//修改用户，先取出原来的用户
         log.info("begin modify:");
         //非空判断
         if(user==null)
         {
+            log.info("user is null!");
             return new UserExecution(UserStateEnum.NULL_AUTH_INFO);
         }
         //判断是否需要修改图片，先把原来的图片删除，再插入新的图片
         //
         try {
-           if (!profileImg.isEmpty()) {
-               User tempUser = userRepostory.findByUserId(user.getUserId());//修改用户，先取出原来的用户
+           if (profileImg!=null && !profileImg.isEmpty()) {
                String relativePath = tempUser.getProfile();
                log.info(relativePath);
                FileUtil.deleteFile(relativePath);
                try {
-                   addProfileImg(user, profileImg);
+                   addProfileImg(tempUser, profileImg);
                } catch (Exception e) {
                    throw new RuntimeException("addShopImg error: "
                            + e.getMessage());
                }
            }
            //2,更新用户信息
-           user.setUpdateTime(Calendar.getInstance());
-           long effectNum = this.save(user);
+           tempUser.setUpdateTime(Calendar.getInstance());
+           tempUser.setUserName(user.getUserName());
+           tempUser.setNickName(user.getNickName());
+           tempUser.setEmail(user.getEmail());
+           tempUser.setStudentNumber(user.getStudentNumber());
+           tempUser.setPhone(user.getPhone());
+           tempUser.setPassword(user.getPassword());
+           tempUser.setMajor(user.getMajor());
+           tempUser.setGrade(user.getGrade());
+           tempUser.setGender(user.getGender());
+           tempUser.setAcademy(user.getAcademy());
+           tempUser.setBirthday(user.getBirthday());
+           tempUser.setUserDesc(user.getUserDesc());
+           tempUser.setIsStudent(user.getIsStudent());
+           log.info("tempUser:"+tempUser.toString());
+           //3.插入数据库，更新信息
+           long effectNum = this.save(tempUser);
            log.info("effectNum:" + effectNum);
            if (effectNum <= 0) {
                throw new RuntimeException("修改失败");
@@ -159,10 +179,13 @@ public class UserService implements UserServiceImp {
         user1.getTags().addAll(tags);
         userRepostory.save(user1);
     }
-    public  ActivityExecution addMyLikeActivity(User user, long activityId) {
+    public  ActivityExecution addMyLikeActivity(User user, long activityId,boolean isAdd) {
         Activity activity=activityRepository.findByActivityId(activityId);
         User user1=userRepostory.findByUserId(user.getUserId());
-        user1.getLikeActivities().add(activity);
+        if(isAdd)
+            user1.getLikeActivities().add(activity);
+        else
+            user1.getLikeActivities().remove(activity);
         if(userRepostory.saveAndFlush(user1)!=null)
         {
             return new ActivityExecution(ActivityState.SUCCESS,activity);
@@ -172,8 +195,9 @@ public class UserService implements UserServiceImp {
             return new ActivityExecution(ActivityState.FAILURE,activity);
         }
     }
-    public ActivityExecution addMySignUpActivity(User user,Activity activity) {
+    public ActivityExecution addMySignUpActivity(User user,long activityId) {
         User user1=userRepostory.findByUserId(user.getUserId());
+        Activity activity=activityRepository.findByActivityId(activityId);
         user1.getLikeActivities().add(activity);
         if(userRepostory.saveAndFlush(user1)!=null)
         {
@@ -184,7 +208,10 @@ public class UserService implements UserServiceImp {
             return new ActivityExecution(ActivityState.FAILURE,activity);
         }
     }
-    public void addMyLikeOrganization(User user, Organization organization){
-
+    public User addMyLikeOrganization(User user, long organizationId){
+        User user1=userRepostory.findByUserId(user.getUserId());
+        Organization organization=organizationRepository.findByOrganizationId(organizationId);
+        user1.getLikeOrganizations().add(organization);
+        return userRepostory.saveAndFlush(user1);
     }
 }

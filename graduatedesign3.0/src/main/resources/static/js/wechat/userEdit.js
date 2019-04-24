@@ -6,66 +6,70 @@
 //从函数开头
 $(function() {
 	var userId = getQueryString('userId');//从URL中获取shopId
-	//
-	// var isEdit = shopId ? true : false;
-	//
-	// var shopInfoUrl = '/myo2o/shop/getshopbyid?shopId=1';
-	// // var shopInfoUrl = '/myo2o/shop/getshopbyid?shopId=' + shopId;
-	// var initUrl = '/myo2o/shop/getshopinitinfo';
-	// var editShopUrl = '/myo2o/shop/registershop';
-	// if (isEdit) {
-	// 	editShopUrl = '/myo2o/shop/modifyshop';
-	// }
-	//
-	// function getInfo(shopId) {
-	// 	$.getJSON(shopInfoUrl, function(data) {
-	// 		if (data.success) {
-	// 			var shop = data.shop;
-	// 			$('#shop-name').val(shop.shopName);
-	// 			$('#shop-addr').val(shop.shopAddr);
-	// 			$('#shop-phone').val(shop.phone);
-	// 			$('#shop-desc').val(shop.shopDesc);
-	// 			var shopCategory = '<option data-id="'
-	// 				+ shop.shopCategory.shopCategoryId + '" selected>'
-	// 				+ shop.shopCategory.shopCategoryName + '</option>';
-	// 			var tempAreaHtml = '';
-	// 			data.areaList.map(function(item, index) {
-	// 				tempAreaHtml += '<option data-id="' + item.areaId + '">'
-	// 					+ item.areaName + '</option>';
-	// 			});
-	// 			$('#shop-category').html(shopCategory);
-	// 			$('#shop-category').attr('disabled','disabled');
-	// 			$('#area').html(tempAreaHtml);
-	// 			$('#area').attr('data-id',shop.areaId);
-	// 		}
-	// 	});
-	// }
-	//
-	// function getCategory() {
-	// 	$.getJSON(initUrl, function(data) {
-	// 		if (data.success) {
-	// 			var tempHtml = '';
-	// 			var tempAreaHtml = '';
-	// 			data.shopCategoryList.map(function(item, index) {
-	// 				tempHtml += '<option data-id="' + item.shopCategoryId
-	// 					+ '">' + item.shopCategoryName + '</option>';
-	// 			});
-	// 			data.areaList.map(function(item, index) {
-	// 				tempAreaHtml += '<option data-id="' + item.areaId + '">'
-	// 					+ item.areaName + '</option>';
-	// 			});
-	// 			$('#shop-category').html(tempHtml);
-	// 			$('#shop-category').removeAttr('disabled');
-	// 			$('#area').html(tempAreaHtml);
-	// 		}
-	// 	});
-	// }
-	//
-	// if (isEdit) {
-	// 	getInfo(shopId);
-	// } else {
-	// 	getCategory();
-	// }
+
+	var isEdit = userId ? true : false;
+
+	//var userInfoUrl = '/myo2o/shop/getshopbyid?shopId=1';
+	 var userInfoUrl = '/myo2o/shop/getshopbyid?shopId=' + shopId;
+	var initUrl = '/myo2o/shop/getshopinitinfo';
+	var editUserUrl = '/myo2o/shop/registershop';
+	if (isEdit) {
+		editUserUrl = '/myo2o/shop/modifyshop';
+	}
+
+	function getInfo(userId) {
+		//这个是有userId的
+		$.getJSON(userInfoUrl, function(data) {
+			if (data.success) {
+				var shop = data.shop;
+				//获取原本的用户信息，渲染到表单
+				$('#shop-name').val(shop.shopName);
+				$('#shop-addr').val(shop.shopAddr);
+				$('#shop-phone').val(shop.phone);
+				$('#shop-desc').val(shop.shopDesc);
+				//生成前端类别列表，并默认选择原来的类别，data-id=''
+				var shopCategory = '<option data-id="'
+					+ shop.shopCategory.shopCategoryId + '" selected>'
+					+ shop.shopCategory.shopCategoryName + '</option>';
+				var tempAreaHtml = '';
+				data.areaList.map(function(item, index) {
+					tempAreaHtml += '<option data-id="' + item.areaId + '">'
+						+ item.areaName + '</option>';
+				});
+				$('#shop-category').html(shopCategory);
+				//设置无法更改类别信息
+				$('#shop-category').attr('disabled','disabled');
+				$('#area').html(tempAreaHtml);
+				$('#area').attr('data-id',shop.areaId);
+			}
+		});
+	}
+//没有userId的，用来注册用的
+	function getCategory() {
+		$.getJSON(initUrl, function(data) {
+			if (data.success) {
+				var tempHtml = '';
+				var tempAreaHtml = '';
+				data.shopCategoryList.map(function(item, index) {
+					tempHtml += '<option data-id="' + item.shopCategoryId
+						+ '">' + item.shopCategoryName + '</option>';
+				});
+				data.areaList.map(function(item, index) {
+					tempAreaHtml += '<option data-id="' + item.areaId + '">'
+						+ item.areaName + '</option>';
+				});
+				$('#shop-category').html(tempHtml);
+				$('#shop-category').removeAttr('disabled');
+				$('#area').html(tempAreaHtml);
+			}
+		});
+	}
+
+	if (isEdit) {
+		getInfo(userId);
+	} else {
+		getCategory();
+	}
 	toastr.options = {
 
 		"closeButton": false, //是否显示关闭按钮
@@ -90,7 +94,7 @@ $(function() {
 
 		"hideMethod": "fadeOut" //消失时的动画方式
 	};
-	var registerUrl = '/user/userEdit';//后台方法,在controller层中实现，并写出对应的mappering
+	var editUrl = '/user/userEdit';//后台方法,在controller层中实现，并写出对应的mappering
 	$('#submit').click(function() { //点击提交的时候响应，获取提交的内容，表单提交的属性id是“submit”
 		var user = {};//变量，json对象
 		user.userId=userId; //获取要编辑的userid
@@ -135,7 +139,7 @@ $(function() {
 		formData.append("verifyCodeActual", verifyCodeActual);
 		//用Ajax将表单提交到后台
 		$.ajax({
-			url : registerUrl, //
+			url : editUrl, // 这里决定用哪个URL，是编辑还是注册
 			type : 'POST', //用post方法提交
 			data : formData, //传送formData
 			contentType : false,//文件，名字
@@ -148,7 +152,7 @@ $(function() {
 				}
 				else {
 					toastr.info('提交失败！');
-					toastr.info(data.success)
+					//toastr.info(data.success)
 					//toastr.info(data);
 					window.location.href ='/user/registerResult';
 					$('#captcha_img').click();//每次注册完之后更换一下验证码

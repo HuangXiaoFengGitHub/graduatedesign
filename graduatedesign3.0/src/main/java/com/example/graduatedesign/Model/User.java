@@ -27,12 +27,16 @@ public class User {
     private String grade;
     private String studentNumber;
     private String password;
-    private String major;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "major_id")
+    private Major major;
     private String phone;
     private String email;
     @JsonFormat(pattern="yyyy-MM-dd")
     private Date birthday;
-    private String academy;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "academy_id")
+    private Academy academy;
     @Column(columnDefinition = "text")
     private String userDesc;
     private long likeCount;
@@ -41,6 +45,7 @@ public class User {
     private Calendar updateTime;
     private int isManager;
     private int isBan;
+    private int isStudent;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="account_id")
     private Account account;

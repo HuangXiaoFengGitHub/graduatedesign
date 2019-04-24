@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
+import java.security.PublicKey;
 import java.util.*;
 
 @Service
@@ -30,6 +31,10 @@ public class ActivityService implements ActivityServiceImp {
     @Autowired
     ActivityImgRepository activityImgRepository;
 
+    public Activity findActivityById(long id)
+    {
+        return activityRepository.findByActivityId(id);
+    }
     //分页查询活动，可输入的条件有：活动类别，活动标签，活动状态，组织名称，活动时间等等
     public Set<Activity> findActivityByCategory(String category)
     {

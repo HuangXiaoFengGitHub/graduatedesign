@@ -24,8 +24,8 @@ public interface UserServiceImp {
     Set<Activity> findMyLikeActivity(User user);
     Set<Tags> findMyTags(User user);
     void addMyTags(User user,List<Tags> tags);
-    ActivityExecution addMyLikeActivity(User user,long activityId);
-    ActivityExecution addMySignUpActivity(User user,Activity activity);
-    void addMyLikeOrganization(User user, Organization organization);
+    ActivityExecution addMyLikeActivity(User user,long activityId,boolean isAdd);
+    ActivityExecution addMySignUpActivity(User user,long activityId);
+    User addMyLikeOrganization(User user, long organizationId);
 
 }

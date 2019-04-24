@@ -91,6 +91,10 @@ public class OrganizationController {
             ManagerOrganization managerOrganization= ManagerOrganization.builder().organization(organization).user(teacher2).grade(1).createTime(Calendar.getInstance()).build();
             managerOrganizationService.save(managerOrganization);
         }
+        //获取微信公众号图片
+
+        //获取缩略图图片流
+
         //设置插入时间
         organization.setCreateTime(Calendar.getInstance());
         //插入数据库
@@ -119,48 +123,6 @@ public class OrganizationController {
             return new ResultBean<>(true);
         }
         return new ResultBean<>(false);
-    }
-    //申请活动
-    @RequestMapping("/toApply")
-    public String toApply()
-    {
-        return "organization/activityApply";
-    }
-    @RequestMapping("/apply")
-    public String apply(Activity activity, HttpServletRequest request)
-    {
-        log.info("活动申请：");
-        return "redirect:/organization/index";
-    }
-    //发布活动
-    @RequestMapping("/toCompose")
-    public String toCompose()
-    {
-        return "organization/activityCompose";
-    }
-    @RequestMapping("/compose")
-    public void compose()
-    {
-
-    }
-    @RequestMapping("/noticeDetail")
-    public String noticeDetail()
-    {
-        return "organization/noticeDetail";
-    }
-    @RequestMapping("/toPostNotice")
-    public String toPostNotice()
-    {
-        return "organization/noticePost";
-    }
-    @RequestMapping("/noticePost")
-    public void noticePost(Notice notice,HttpServletRequest request,HttpServletResponse response)
-    {
-        try {
-            response.sendRedirect("/organization/index");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
     @RequestMapping("/messageDetail")
     public String messageManager(String type)

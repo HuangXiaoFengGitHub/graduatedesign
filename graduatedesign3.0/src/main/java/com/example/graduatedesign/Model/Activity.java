@@ -21,7 +21,7 @@ public class Activity {
     private String activityName;
     @Column(nullable = true)
     private int priority;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="organization_id")
     private Organization organization; //外键
 //    @Enumerated(EnumType.STRING)

@@ -1,15 +1,10 @@
 package com.example.graduatedesign.controller.wechat;
-import com.example.graduatedesign.Model.Account;
-import com.example.graduatedesign.Model.Activity;
-import com.example.graduatedesign.Model.Tags;
-import com.example.graduatedesign.Model.User;
+import com.example.graduatedesign.Model.*;
 import com.example.graduatedesign.Model.pojo.ResultBean;
 import com.example.graduatedesign.dto.Result;
 import com.example.graduatedesign.dto.UserExecution;
 import com.example.graduatedesign.enums.UserStateEnum;
-import com.example.graduatedesign.service.AccountService;
-import com.example.graduatedesign.service.TagsService;
-import com.example.graduatedesign.service.UserService;
+import com.example.graduatedesign.service.*;
 import com.example.graduatedesign.util.CodeUtil;
 import com.example.graduatedesign.util.HttpServletRequestUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,6 +36,25 @@ public class UserController {
     AccountService accountService;
     @Autowired
     TagsService tagsService;
+    @Autowired
+    MajorService majorService;
+    @Autowired
+    AcademyService academyService;
+
+    @RequestMapping("/registerInitInfo")
+    @ResponseBody
+    public Map<String,Object> registerInitInfo()
+    {
+        log.info("get the registerInitInfo:");
+        Map<String,Object> map=new HashMap<>();
+        List<Academy> academies=academyService.findAll();
+        List<Major> majors=majorService.findAll();
+        map.put("academyList",academies);
+        map.put("majorList",majors);
+        map.put("success",true);
+        return map;
+    }
+
     @RequestMapping("/toRegister")
     public String toRegister()
     {
@@ -52,9 +66,9 @@ public class UserController {
      * @param request
      * @return
      */
-    @RequestMapping("/register")
+    @RequestMapping("/userRegister")
     @ResponseBody
-    public Map<String,Object> register(@RequestParam("thumbnail") MultipartFile profileImg,Model model, HttpServletRequest request)
+    public Map<String,Object> register(@RequestParam("thumbnail") MultipartFile profileImg,Model model, HttpServletRequest request,HttpServletResponse response)
     {
         //获取user对象，图片对象，和验证码对象
         Map<String,Object> map=new HashMap<>();
@@ -63,8 +77,16 @@ public class UserController {
             model.addAttribute("success", false);
             model.addAttribute("errMsg", "输入了错误的验证码");
             log.info("验证码错误");
+            map.put("success",false);
+            map.put("isWrong",true);
+            map.put("errMsg","验证码错误");
             return map;
         }
+        //获取专业和学院
+        String userMajor=HttpServletRequestUtil.getString(request,"userMajor");
+        log.info(userMajor);
+        String userAcademy=HttpServletRequestUtil.getString(request,"userAcademy");
+        log.info(userAcademy);
         String userStr= HttpServletRequestUtil.getString(request,"user");
         log.info(userStr);
         if(profileImg.isEmpty())
@@ -92,14 +114,25 @@ public class UserController {
 //        }
         User user=null;
         try {
-            user=objectMapper.readValue(userStr,User.class);
-            log.info("translate successfullly");
+            if(userStr!=null&&userStr.trim()!="") {
+                user = objectMapper.readValue(userStr, User.class);
+                log.info("转换成功");
+            }
+            else {
+                map.put("success",false);
+                map.put("errMsg","传入了空的注册信息");
+            }
         } catch (IOException e) {
             model.addAttribute("success",false);
             model.addAttribute("errMsg",e.toString());
          //   return "wechat/userRegisterResult";
             return map;
         }
+        // 插入专业和学院信息；
+        Major major=majorService.findMajorByName(userMajor);
+        Academy academy=academyService.findAcademyByName(userAcademy);
+        user.setMajor(major);
+        user.setAcademy(academy);
         if(user!=null && user.getPassword()!=null  )
         {
             try {
@@ -150,22 +183,54 @@ public class UserController {
             //     throw new LoginException("登录失败！ 邮箱或者密码错误");
         }
     }
+    @RequestMapping("/getUserInfo")
+    @ResponseBody
+    public Map<String,Object> getUserInfoByUserId(@RequestParam(value = "userId",defaultValue = "0") long userId)
+    {
+        //获取user对象，图片对象，和验证码对象
+        Map<String,Object> map=new HashMap<>();
+        log.info("userId:"+userId);
+        User user=null;
+        if(userId>0)
+            user=userService.findUserByUserId(userId);
+       // log.info(user.toString());
+        if(user!=null)
+        {
+            map.put("user",user);
+            map.put("success",true);
+        }
+        else
+        {
+            map.put("success",false);
+            map.put("errMsg","请输入userid");
+        }
+        return map;
+    }
     @RequestMapping("/toUserEdit")
     public String toUserEdit()
     {
         return "user/userEdit";
     }
     @RequestMapping("/userEdit")
-    public Map<String,Object> userEdit(@RequestParam("thumbnail") MultipartFile profileImg,Model model, HttpServletRequest request)
+    @ResponseBody
+    public Map<String,Object> userEdit(Model model, HttpServletRequest request,@RequestParam(value = "userId",defaultValue = "0")long userId)
     {
+        log.info("userId:"+userId);
         Map<String,Object> map=new HashMap<>();
+        MultipartFile profileImg =( MultipartFile)request.getAttribute("thumbnail");
         //1,首先检查验证码
-        if(!CodeUtil.checkVerifyCode(request))
-        {
+        if (!CodeUtil.checkVerifyCode(request)) {
+            log.info("验证码错误");
             map.put("success",false);
+            map.put("isWrong",true);
             map.put("errMsg","验证码错误");
             return map;
         }
+        //获取专业和学院
+        String userMajor=HttpServletRequestUtil.getString(request,"userMajor");
+        log.info(userMajor);
+        String userAcademy=HttpServletRequestUtil.getString(request,"userAcademy");
+        log.info(userAcademy);
 //        // 检查图片
 //        if(profileImg.isEmpty())
 //        {
@@ -174,10 +239,16 @@ public class UserController {
 //            return map;
 //        }
         //2，获取原来的用户
-        User newUser;
-        String userStr=HttpServletRequestUtil.getString(request,"userStr");
+        User newUser=null;
+        String userStr=HttpServletRequestUtil.getString(request,"user");
         try {
+            if(userStr!=null&&userStr.trim()!="")
             newUser=objectMapper.readValue(userStr,User.class);
+            else {
+                map.put("success",false);
+                map.put("errMsg","传入了空的修改信息");
+                return map;
+            }
         } catch (IOException e) {
             map.put("success",false);
             map.put("errMsg",e.toString());
@@ -187,9 +258,15 @@ public class UserController {
         {
             try {
                 //从session中获取原来的user
-                User currentUser = (User) request.getSession().getAttribute("user");
-                newUser.setUserId(currentUser.getUserId());
+//                User currentUser = (User) request.getSession().getAttribute("user");
+//                newUser.setUserId(currentUser.getUserId());
+                newUser.setUserId(userId);
+                Major major=majorService.findMajorByName(userMajor);
+                Academy academy=academyService.findAcademyByName(userAcademy);
+                newUser.setMajor(major);
+                newUser.setAcademy(academy);
                 //3，修改用户信息
+                log.info(newUser.toString());
                 UserExecution le = userService.modifyUser(newUser, profileImg);
                 if (le.getStateInfo() == UserStateEnum.SUCCESS.getStateInfo()) {
                     map.put("success", true);
