@@ -6,17 +6,18 @@ import com.example.graduatedesign.enums.ActivityCategoryStateEnum;
 import com.example.graduatedesign.enums.HeadLineStateEnum;
 import com.example.graduatedesign.service.ActivityCategoryService;
 import com.example.graduatedesign.service.HeadlineService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Controller
 @RequestMapping("/frontend")
 public class MainPageController {
@@ -50,7 +51,7 @@ public class MainPageController {
 		try {
 			Headline headLineCondition = new Headline();
 			//headLineCondition.setEnableStatus(1);
-			headLineList = headlineService.findEnableHeadline(1);
+			headLineList = headlineService.findHeadlineByStatus(1);
 			modelMap.put("headLineList", headLineList);
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -1,6 +1,7 @@
 package com.example.graduatedesign.Model;
 
 import lombok.*;
+import org.springframework.stereotype.Controller;
 
 import javax.persistence.*;
 import java.util.*;
@@ -20,10 +21,13 @@ public class Tags {
     private String tagName;
     private Calendar createTime;
     private Calendar updateTime;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "activity_category_id")
+    private ActivityCategory activityCategory;
     @ManyToMany(mappedBy = "tags")
     private Set<User> users=new HashSet<>();
     @ManyToMany(mappedBy = "tags")
     private Set<Organization> organizations=new HashSet<>();
-    @ManyToMany(mappedBy = "tags")
+    @OneToMany(mappedBy = "tags")
     private Set<Activity> activities=new HashSet<>();
 }

@@ -18,7 +18,7 @@ public interface OrganizationImp {
     List<Organization> findParent(String name);
     public void save(Organization organization);
     Organization checkLogin(String email,String password);
-    List<Organization> findOrganizationsByName(String name);
+    List<Organization> findOrganizationsByNameContain(String name);
     public OrganizationExecution register(Organization organization, MultipartFile organizationImg, MultipartFile wechatImg);
     //    public void addProfileImg(User user, CommonsMultipartFile profileImg);
     public OrganizationExecution modifyUser(Organization organization,MultipartFile organizationImg,MultipartFile wechatImg);

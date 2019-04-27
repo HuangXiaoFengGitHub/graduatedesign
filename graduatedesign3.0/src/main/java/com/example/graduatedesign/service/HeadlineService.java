@@ -18,7 +18,7 @@ public class HeadlineService implements HeadlineServiceImp {
     {
       return headlineRepository.findAll();
     }
-    public List<Headline> findEnableHeadline(int status)
+    public List<Headline> findHeadlineByStatus(int status)
     {
         return headlineRepository.findHeadlinesByStatusOrderByPriorityDesc(status);
     }

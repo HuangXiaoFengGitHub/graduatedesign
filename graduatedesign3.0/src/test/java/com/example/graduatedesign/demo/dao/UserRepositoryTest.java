@@ -6,6 +6,7 @@ import com.example.graduatedesign.Model.User;
 import com.example.graduatedesign.dao.ActivityRepository;
 import com.example.graduatedesign.dao.UserRepostory;
 import com.example.graduatedesign.demo.BaseTest;
+import com.example.graduatedesign.demo.service.ActivityService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Test;

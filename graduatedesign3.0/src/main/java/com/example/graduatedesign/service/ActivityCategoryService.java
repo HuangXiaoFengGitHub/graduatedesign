@@ -26,5 +26,9 @@ public class ActivityCategoryService implements ActivityCategoryServiceImp {
     {
         return activityCategoryRepository.findActivityCategoriesByParentId(0L);
     }
+    public List<ActivityCategory> findByParentId(long id)
+    {
+        return activityCategoryRepository.findActivityCategoriesByParentId(id);
+    }
 
 }

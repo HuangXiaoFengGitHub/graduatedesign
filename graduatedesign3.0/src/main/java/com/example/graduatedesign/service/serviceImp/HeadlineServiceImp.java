@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface HeadlineServiceImp {
     List<Headline> findAll();
+    public List<Headline> findHeadlineByStatus(int status);
 }

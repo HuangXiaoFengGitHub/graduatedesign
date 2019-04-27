@@ -19,6 +19,7 @@ public class Activity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long activityId;
     private String activityName;
+    private int enableStatus;//1,通过审核且可以发布的活动，0.不能在前台显示的活动
     @Column(nullable = true)
     private int priority;
     @ManyToOne(cascade = CascadeType.ALL)
@@ -30,7 +31,7 @@ public class Activity {
     @JoinColumn(name = "category_id")
     private ActivityCategory category;
    // @Enumerated(EnumType.STRING)
-    private Integer status;
+    private String status; //1.审核中，2.未通过审核 3.审核通过 4.已发布 5.正在进行 6.已结束
     @Column(columnDefinition = "longtext")
     private String articleDesc;
     @ManyToOne
@@ -61,7 +62,9 @@ public class Activity {
     @ManyToMany(mappedBy = "likeActivities",cascade = CascadeType.ALL)
     private List<User> likeUsers=new ArrayList<>();
     //标签
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name="t_activity_tags",joinColumns = @JoinColumn(name="activity_id",referencedColumnName = "activityId"),inverseJoinColumns = @JoinColumn(name="tag_id",referencedColumnName = "tagId"))
-    private Set<Tags> tags=new HashSet<>();
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "tag_id")
+    private Tags tags;
+    //@JoinTable(name="t_activity_tags",joinColumns = @JoinColumn(name="activity_id",referencedColumnName = "activityId"),inverseJoinColumns = @JoinColumn(name="tag_id",referencedColumnName = "tagId"))
+    //private Set<Tags> tags=new HashSet<>();
 }

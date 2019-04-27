@@ -15,4 +15,5 @@ public interface TagsRepository extends JpaRepository<Tags,Long> {
     //分页查询活动，可输入的条件有：活动类别，活动标签，活动状态，组织名称，活动时间等等
     Tags findByTagName(String name);
     Tags findByTagId(long id);
+    List<Tags> findTagsByActivityCategory(ActivityCategory activityCategory);
 }

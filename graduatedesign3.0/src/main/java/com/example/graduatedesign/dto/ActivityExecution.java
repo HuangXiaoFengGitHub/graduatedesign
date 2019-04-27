@@ -29,7 +29,7 @@ public class ActivityExecution {
     private Activity activity;
 
     // 获取的活动列表(查询活动列表的时候用)
-    private List<Activity> shopList;
+    private List<Activity> activityList;
 
     // 店铺操作失败的时候使用的构造器
     public ActivityExecution(ActivityState stateEnum) {
@@ -47,8 +47,6 @@ public class ActivityExecution {
     public ActivityExecution(ActivityState stateEnum, List<Activity> shopList) {
         this.state = stateEnum.getState();
         this.stateInfo = stateEnum.getStateInfo();
-        this.shopList = shopList;
+        this.activityList = shopList;
     }
-
-
 }

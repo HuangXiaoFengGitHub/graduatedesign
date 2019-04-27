@@ -8,12 +8,23 @@ import com.example.graduatedesign.service.serviceImp.ActivityServiceImp;
 import com.example.graduatedesign.util.FileUtil;
 import com.example.graduatedesign.util.ImageUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.security.PublicKey;
 import java.util.*;
 
@@ -36,9 +47,97 @@ public class ActivityService implements ActivityServiceImp {
         return activityRepository.findByActivityId(id);
     }
     //分页查询活动，可输入的条件有：活动类别，活动标签，活动状态，组织名称，活动时间等等
+    //不能实现分页查询功能
     public Set<Activity> findActivityByCategory(String category)
     {
         return activityCategoryRepository.findByActivityCategoryName(category).getActivities();
+    }
+
+    public ActivityExecution findAll(int pageIndex,int pageSize)
+    {
+        if(pageIndex>=0 && pageSize>0)
+        {
+            Sort sort= new Sort(Sort.Direction.DESC,"priority");
+            Pageable pageable2= PageRequest.of(pageIndex,pageSize,sort);
+            Page<Activity> activityPage=activityRepository.findAll(pageable2);
+            ActivityExecution activityExecution=new ActivityExecution(ActivityState.SUCCESS,activityPage.getContent());//当前内容
+            activityExecution.setCount((int)activityPage.getTotalElements());//活动总数
+            return activityExecution;
+
+        }
+        else {
+            return new ActivityExecution(ActivityState.NULL_ACTIVITYID);
+        }
+    }
+    /**
+     * 组合查询，活动类别，组织名称，活动时间，活动状态（未开始，已经结束），活动标签
+     * @param model
+     * @param pageIndex
+     * @param pageSize
+     * @return
+     */
+    public ActivityExecution findSearch(Activity model,int pageIndex,int pageSize)
+    {
+        if(model!=null && pageIndex>=0 && pageSize>0)
+        {
+            Sort sort= new Sort(Sort.Direction.DESC,"priority");
+            Pageable pageable= PageRequest.of(pageIndex,pageSize,sort);
+            Page<Activity> result = activityRepository.findAll(new Specification<Activity>() {
+                public Predicate toPredicate(Root<Activity> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                    List<Predicate> list = new ArrayList<Predicate>();
+                    //匹配状态,仅仅匹配已经审核成功的活动
+                    if(model.getEnableStatus()>0){
+                        list.add(cb.equal(root.get("enableStatus").as(Integer.class),model.getEnableStatus()));
+                    }
+                    //匹配组织
+                    if (model.getOrganization()!=null) {
+                        list.add(cb.equal(root.get("organization").as(Organization.class),model.getOrganization()));
+                    }
+                    //匹配活动名称
+                    if(StringUtils.isNotBlank(model.getActivityName()))
+                    {
+                        list.add(cb.like(root.get("activityName").as(String.class), "%" + model.getActivityName() + "%"));
+                    }
+                    // 活动类别
+                    if (model.getCategory() != null) {
+                        list.add(cb.equal(root.get("category").as(ActivityCategory.class), model.getCategory()));
+                    }
+                    //匹配状态
+                    if (StringUtils.isNotBlank(model.getStatus())) {
+                        list.add(cb.like(root.get("status").as(String.class), "%" + model.getStatus() + "%"));
+                    }
+                    //匹配标签
+                    if (model.getTags() != null) {
+                        list.add(cb.equal(root.get("tags").as(Tags.class), model.getTags()));
+                    }
+                   // TO DO 匹配活动时间
+                    Predicate[] p = new Predicate[list.size()];
+                    return cb.and(list.toArray(p));
+                }
+            },pageable);
+            ActivityExecution activityExecution=new ActivityExecution(ActivityState.SUCCESS,result.getContent());//当前内容
+            activityExecution.setCount((int)result.getTotalElements());//活动总数
+            return activityExecution;
+        }
+        else {
+            return new ActivityExecution(ActivityState.NULL_ACTIVITYID);
+        }
+    }
+    /**
+     * //能实现分页功能的,查询活动,根据分页查询查数据
+     * @param activityCategory
+     * @param pageIndex
+     * @param pagesize
+     * @return
+     */
+    public ActivityExecution findByCategoryPage(ActivityCategory activityCategory,int pageIndex,int pagesize)
+    {
+        Sort sort=new Sort(Sort.Direction.DESC,"priority");
+        Pageable pageable= PageRequest.of(pageIndex,pagesize,sort);
+        Page<Activity> activityPage=activityRepository.findActivitiesByCategory(activityCategory,pageable);
+        ActivityExecution activityExecution=new ActivityExecution(ActivityState.SUCCESS,activityPage.getContent());//当前内容
+        activityExecution.setCount((int)activityPage.getTotalElements());//活动总数
+        return activityExecution;
     }
     public Set<Activity> findActivityByTags(String tags)
     {

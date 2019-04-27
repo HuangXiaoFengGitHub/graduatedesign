@@ -9,4 +9,6 @@ import java.util.Optional;
 public interface ActivityCategoryServiceImp {
     List<ActivityCategory> findAll();
     Optional<ActivityCategory> findById(long id);
+    public List<ActivityCategory> findFirstLever();
+    public List<ActivityCategory> findByParentId(long id);
 }

@@ -37,7 +37,11 @@ public class OrganizationService implements OrganizationImp {
     public List<Organization> findByOrganizationName(String organizationName){
         return organizationRepository.findByOrganizationName(organizationName);
     }
-   public List<Organization> findOrganizationsByName(String name)
+    public Organization findByOrganizationNameContain(String organizationName)
+    {
+        return organizationRepository.findByOrganizationNameContaining(organizationName);
+    }
+   public List<Organization> findOrganizationsByNameContain(String name)
     {
         return organizationRepository.findOrganizationsByOrganizationNameContaining(name);
     }
