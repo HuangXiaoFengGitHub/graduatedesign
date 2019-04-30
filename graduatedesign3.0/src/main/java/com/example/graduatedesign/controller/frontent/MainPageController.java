@@ -46,7 +46,6 @@ public class MainPageController {
 			modelMap.put("errMsg", s.getStateInfo());
 			return modelMap;
 		}
-
 		List<Headline> headLineList = new ArrayList<Headline>();
 		try {
 			Headline headLineCondition = new Headline();
@@ -63,5 +62,4 @@ public class MainPageController {
 		modelMap.put("success", true);
 		return modelMap;
 	}
-
 }

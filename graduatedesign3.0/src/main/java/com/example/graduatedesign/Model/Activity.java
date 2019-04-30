@@ -31,9 +31,9 @@ public class Activity {
     @JoinColumn(name = "category_id")
     private ActivityCategory category;
    // @Enumerated(EnumType.STRING)
-    private String status; //1.审核中，2.未通过审核 3.审核通过 4.已发布 5.正在进行 6.已结束
+    private String status; //1.审核中，2.未通过审核 3.审核通过 4.未开始 5.正在进行 6.已结束
     @Column(columnDefinition = "longtext")
-    private String articleDesc;
+    private String activityDesc; //活动简介
     @ManyToOne
     @JoinColumn(name="place_id")
     private Place place;              //外键

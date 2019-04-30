@@ -29,6 +29,6 @@ public class FrontendController {
     public String getAllActivity()
     {
         log.info("getAllActivity");
-        return "frontend/index";
+        return "frontend/activitylist";
     }
 }

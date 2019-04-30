@@ -26,6 +26,6 @@ public interface UserServiceImp {
     void addMyTags(User user,List<Tags> tags);
     ActivityExecution addMyLikeActivity(User user,long activityId,boolean isAdd);
     ActivityExecution addMySignUpActivity(User user,long activityId);
-    User addMyLikeOrganization(User user, long organizationId);
+    User addMyLikeOrganization(User user, long organizationId,boolean isAdd);
 
 }

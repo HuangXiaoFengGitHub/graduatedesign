@@ -1,5 +1,5 @@
 /**
- * 
+ * 格式化日期
  */
 Date.prototype.Format = function(fmt) {
 	var o = {
@@ -22,6 +22,11 @@ Date.prototype.Format = function(fmt) {
 	return fmt;
 }
 
+/**
+ * 获取js值
+ * @param name
+ * @returns {string}
+ */
 function getQueryString(name) {
 	var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
 	var r = window.location.search.substr(1).match(reg);

@@ -44,7 +44,8 @@
 			<div class="content infinite-scroll infinite-scroll-bottom"
 				data-distance="100">
 				<!-- 这里是页面内容区 -->
-				<div class="shoplist-button-div" id="shoplist-search-div">
+				<div class="shoplist-button-div" id="shoplist-search-div" >
+					<!---默认的col元素是33%-->
 					<!-- <a href="#" class="button">所有货物</a>
                         <a href="#" class="button">吃的</a>
                         <a href="#" class="button">喝的</a>
@@ -54,8 +55,14 @@
 				</div>
 				<!----->
 				<div class="select-wrap">
-					<select class="select" id="area-search"></select>
+					<select class="select" id="area-search">
+						<option value="">全部活动</option>
+						<option value="未开始">未开始</option>
+						<option value="正在进行">正在进行</option>
+						<option value="已结束">已结束</option>
+					</select>
 				</div>
+				<!---活动列表-->
 				<div class="list-div shop-list">
 					<!-- <div class="card">
                             <div class="card-header">传统火锅店</div>
@@ -79,6 +86,7 @@
                             </div>
                         </div> -->
 				</div>
+				<!---无极分页--->
 				<div class="infinite-scroll-preloader">
 					<div class="preloader"></div>
 				</div>

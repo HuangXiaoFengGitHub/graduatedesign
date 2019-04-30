@@ -208,7 +208,7 @@ public class UserService implements UserServiceImp {
             return new ActivityExecution(ActivityState.FAILURE,activity);
         }
     }
-    public User addMyLikeOrganization(User user, long organizationId){
+    public User addMyLikeOrganization(User user, long organizationId,boolean isAdd){
         User user1=userRepostory.findByUserId(user.getUserId());
         Organization organization=organizationRepository.findByOrganizationId(organizationId);
         user1.getLikeOrganizations().add(organization);

@@ -21,7 +21,7 @@ public class OrganizationComment {
     @JoinColumn(name="user_id")
     private User user;
     @ManyToOne
-    @JoinColumn(name="activity_id")
+    @JoinColumn(name="organization_id")
     private Organization organization;
     @Column(columnDefinition = "longtext")
     private String content;

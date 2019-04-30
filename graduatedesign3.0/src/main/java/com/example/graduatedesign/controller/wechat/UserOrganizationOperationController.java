@@ -25,7 +25,7 @@ public class UserOrganizationOperationController {
         User currentUser=(User) request.getSession().getAttribute("user");
         if(organizationId >0 )
         {
-            User user=userService.addMyLikeOrganization(currentUser,organizationId);
+            User user=userService.addMyLikeOrganization(currentUser,organizationId,true);
             if(user!=null && user.getUserId()==currentUser.getUserId())
             {
                 map.put("success",true);

@@ -20,7 +20,7 @@ import java.util.*;
 @Controller
 @Slf4j
 @RequestMapping("/activity")
-public class ActivityController {
+public class ActivityShowController {
     @Autowired
     UserService userService;
     @Autowired
@@ -50,6 +50,7 @@ public class ActivityController {
     @ResponseBody
     public Map<String,Object> getActivityList(@RequestParam(defaultValue = "0") long activityCategoryId,HttpServletRequest request)
     {
+        log.info("获取活动列表：");
 //        activityService.findByCategoryPage()
         Map<String,Object> map=new HashMap<>();
         int pageIndex=HttpServletRequestUtil.getInt(request,"pageIndex");
@@ -77,17 +78,20 @@ public class ActivityController {
                 }
 
             }
-            //匹配活动类别
-            Optional<ActivityCategory> activityCategory = activityCategoryService.findById(activityCategoryId);
-            if (activityCategory.isPresent())
-                model.setCategory(activityCategory.get());
+            //匹配活动类别，如果没有定义活动类别,则activityCategoryId==0，则就匹配全部活动
+            if(activityCategoryId!=0)
+            {
+                Optional<ActivityCategory> activityCategory = activityCategoryService.findById(activityCategoryId);
+                if (activityCategory.isPresent())
+                    model.setCategory(activityCategory.get());
+            }
             //匹配活动标签
             long tagId = HttpServletRequestUtil.getLong(request, "tagId");
             Tags tags = tagsService.findTagsById(tagId);
             if (tags != null)
                 model.setTags(tags);
             //匹配活动状态
-            String activityState = HttpServletRequestUtil.getString(request, "status");
+            String activityState = HttpServletRequestUtil.getString(request, "activitystatus");
             if (StringUtils.isNotBlank(activityState)) {
                 model.setStatus(activityState);
             }
