@@ -31,6 +31,7 @@ $(function () {
 	}
 
 	function goShop(status, id) {
+		//只显示通过审核的活动
 		if (status >=3) {
 			return '<a href="/activity/getActivityDetail?activityId='+ id +'">查看详情</a>';
 		} else {

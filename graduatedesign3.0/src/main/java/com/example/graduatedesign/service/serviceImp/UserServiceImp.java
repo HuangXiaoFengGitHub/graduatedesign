@@ -6,6 +6,7 @@ import com.example.graduatedesign.Model.Organization;
 import com.example.graduatedesign.Model.Tags;
 import com.example.graduatedesign.Model.User;
 import com.example.graduatedesign.dto.ActivityExecution;
+import com.example.graduatedesign.dto.OrganizationExecution;
 import com.example.graduatedesign.dto.UserExecution;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
@@ -25,7 +26,8 @@ public interface UserServiceImp {
     Set<Tags> findMyTags(User user);
     void addMyTags(User user,List<Tags> tags);
     ActivityExecution addMyLikeActivity(User user,long activityId,boolean isAdd);
-    ActivityExecution addMySignUpActivity(User user,long activityId);
-    User addMyLikeOrganization(User user, long organizationId,boolean isAdd);
-
+    ActivityExecution addMySignUpActivity(User user,long activityId,boolean isSignUp);
+    OrganizationExecution addMyLikeOrganization(User user, long organizationId, boolean isAdd);
+    boolean isLike(long activityId,User user);
+    boolean isSignUp(long activityId,User user);
 }

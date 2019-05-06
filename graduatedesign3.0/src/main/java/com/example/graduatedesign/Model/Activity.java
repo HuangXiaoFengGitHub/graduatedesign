@@ -2,6 +2,7 @@ package com.example.graduatedesign.Model;
 
 
 import com.example.graduatedesign.enums.ActivityState;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -13,7 +14,7 @@ import java.util.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "t_activity")
-@ToString(exclude = "likeUsers")
+//@ToString(exclude = {"likeUsers","users"})
 public class Activity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -31,7 +32,7 @@ public class Activity {
     @JoinColumn(name = "category_id")
     private ActivityCategory category;
    // @Enumerated(EnumType.STRING)
-    private String status; //1.审核中，2.未通过审核 3.审核通过 4.未开始 5.正在进行 6.已结束
+    private int status; //1.审核中，2.未通过审核 3.审核通过 4.未开始 5.正在进行 6.已结束
     @Column(columnDefinition = "longtext")
     private String activityDesc; //活动简介
     @ManyToOne
@@ -47,17 +48,24 @@ public class Activity {
     @Column(columnDefinition="text")
     private String imgAddr;
     @OneToMany(mappedBy = "activity")
+    private Set<Notice> notices;
+    @OneToMany(mappedBy = "activity")
     private List<ActivityImg> activityImgs;
     @OneToMany(mappedBy = "activity")
     private List<ActivityArticle> activityArticles;
     @OneToMany(mappedBy = "activity")
     private List<Attachment> attachments;
-    @OneToMany(mappedBy = "activity")
-    private List<ActivityComment> activityComments;
+
+//    @OneToMany(mappedBy = "activity")
+//    private List<ActivityComment> activityComments;
     @OneToMany(mappedBy = "activity")
     private List<ActivityScore> activityScores;
+    //评论
+    @JsonIgnore
+    @OneToMany(mappedBy = "activity",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    private Set<UserActivityComment> userActivityComments;
     //报名关注
-    @ManyToMany(mappedBy = "activities",cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "signUpActivities",cascade = CascadeType.ALL)
     private List<User> users=new ArrayList<>();
     @ManyToMany(mappedBy = "likeActivities",cascade = CascadeType.ALL)
     private List<User> likeUsers=new ArrayList<>();

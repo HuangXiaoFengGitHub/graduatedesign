@@ -46,7 +46,7 @@ public class ActivityRepositoryTest {
         log.info(category.getActivities().toString());
        // activityCategoryRepository.save(category);//手动持久化
         int page=2,size=2; //第2页，每一页有2个元素
-        Sort sort= new Sort(Sort.Direction.DESC,"activityId");
+        Sort sort= new Sort(Sort.Direction.DESC,"activityId");//按照活动id排序
         Pageable pageable= PageRequest.of(page,size,sort);
         Page<Activity> activityList=activityRepository.findActivitiesByCategory(category,pageable);
         //List<Activity> activityList=activityRepository.findActivitiesByCategory(2L);

@@ -19,6 +19,7 @@ import java.util.Locale;
 import java.util.Set;
 
 public interface ActivityServiceImp {
+    public long save(Activity activity);
     //分页查询活动，可输入的条件有：活动类别，活动标签，活动状态，组织名称，活动时间等等
     public Set<Activity> findActivityByCategory(String category);
 
@@ -36,6 +37,6 @@ public interface ActivityServiceImp {
 
     public ActivityExecution findByCategoryPage(ActivityCategory activityCategory, int pageIndex, int pagesize);
 
-    public ActivityExecution findSearch(Activity model,int pageIndex,int pageSize);
+    public ActivityExecution findSearch(Activity model,int pageIndex,int pageSize,String search);
 
 }

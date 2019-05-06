@@ -1,5 +1,7 @@
 package com.example.graduatedesign.Model;
+import com.example.graduatedesign.Model.mongo.Comment;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import javax.persistence.*;
@@ -65,9 +67,12 @@ public class User {
     private Set<OrganizationMessage> organizationMessages;
     @OneToMany(mappedBy = "receiver",cascade = CascadeType.ALL,fetch=FetchType.EAGER)
     private Set<OrganizationMessage> organizationMessagesReceiver;
-    //评论相关
-    @OneToMany(mappedBy ="user",cascade = CascadeType.ALL,fetch=FetchType.EAGER)
-    private Set<ActivityComment> comments;
+   //评论相关
+//    @OneToMany(mappedBy ="user",cascade = CascadeType.ALL,fetch=FetchType.EAGER)
+//    private Set<ActivityComment> comments;
+    @JsonIgnore
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    private Set<UserActivityComment> userActivityComments;
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,fetch=FetchType.EAGER)
     private Set<ActivityScore> activityScores;
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,fetch=FetchType.EAGER)
@@ -75,11 +80,13 @@ public class User {
     //报名关注相关
     @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @JoinTable(name="t_signUp",joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "userId"), inverseJoinColumns = @JoinColumn(name = "activity_id", referencedColumnName = "activityId"))
-    private Set<Activity> activities=new HashSet<>();
+    private Set<Activity> signUpActivities=new HashSet<>();
     @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @JoinTable(name = "t_like_Activity",joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "userId"), inverseJoinColumns = @JoinColumn(name = "activity_id", referencedColumnName = "activityId"))
     private Set<Activity> likeActivities=new HashSet<>();
-
+    @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @JoinTable(name = "t_like_comment",joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "userId"), inverseJoinColumns = @JoinColumn(name = "comment_id", referencedColumnName = "commentId"))
+    private Set<ActivityComment> likeComments=new HashSet<>();
     @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @JsonIgnoreProperties(value = { "likeUsers" })
     @JoinTable(name="t_like_organization",joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "userId"), inverseJoinColumns = @JoinColumn(name = "organization_id", referencedColumnName = "organizationId"))

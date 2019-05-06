@@ -32,11 +32,12 @@
                     <span th:if="${session.organization != null}" th:text="'欢迎您!&nbsp;' + ${session.organization.organizationName}">请登陆</span>
                 </a>
                 <dl class="layui-nav-child">
-                    <!--后台方法-->
-                    <dd th:if="${session.organization != null}"><a href="/mall/user/logout.do"><i class="fa fa-sign-out"></i> 退出登录</a></dd>
-                    <dd th:if="${session.organization != null}"><a href="/mall/order/toList.html"><i class="fa fa-list"></i> 基本资料</a></dd>
-                    <dd th:if="${session.organization != null}"><a href="/mall/product/toCart.html"><i class="fa fa-shopping-cart"></i> 隐私设置</a></dd>
-                    <dd th:if="${session.organization != null}"><a href="/mall/product/toCart.html"><i class="fa fa-shopping-cart"></i> 绑定设置</a></dd>
+                    <!--如果用户已经登录,即用户session中存在organization属性，右上角显示用户名和用户资料-->
+                    <dd th:if="${session.organization != null}"><a href="/organization/logout"><i class="fa fa-sign-out"></i> 退出登录</a></dd>
+                    <dd th:if="${session.organization != null}"><a href="/organization/messageDetail"><i class="fa fa-list"></i> 基本资料</a></dd>
+                    <dd th:if="${session.organization != null}"><a href="/organization/noticeManage/noticeDetail"><i class="fa fa-shopping-cart"></i> 隐私设置</a></dd>
+                    <dd th:if="${session.organization != null}"><a href="/organization/index"><i class="fa fa-shopping-cart"></i> 绑定设置</a></dd>
+                    <!--如果用户未登录,即用户session中不存在organization属性，右上角显示提示登录-->
                     <dd th:if="${session.organization == null}"><a href="/organization/toLogin"><i class="fa fa-sign-in"></i> 登录</a></dd>
                     <dd th:if="${session.organization == null}"><a th:href="@{/organization/toRegister}"><i class="fa fa-user-plus"></i> 注册</a></dd>
                 </dl>

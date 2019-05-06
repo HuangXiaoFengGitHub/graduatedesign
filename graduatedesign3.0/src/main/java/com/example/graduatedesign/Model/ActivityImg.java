@@ -1,15 +1,15 @@
 package com.example.graduatedesign.Model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Calendar;
 
 @Builder
-@Data
+@Getter
+@Setter
+@ToString(exclude = "activity")
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "t_activity_img")
@@ -22,6 +22,7 @@ public class ActivityImg {
     @Column(columnDefinition = "text")
     private String imageDesc; //描述
     private int priority;
+    @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "activity_id")
     private Activity activity;

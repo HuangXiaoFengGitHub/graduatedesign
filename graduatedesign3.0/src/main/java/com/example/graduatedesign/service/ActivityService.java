@@ -41,7 +41,12 @@ public class ActivityService implements ActivityServiceImp {
     OrganizationRepository organizationRepository;
     @Autowired
     ActivityImgRepository activityImgRepository;
-
+    @Autowired
+    UserActivityCommentRepository userActivityCommentRepository;
+    public long save(Activity activity)
+    {
+        return activityRepository.saveAndFlush(activity).getActivityId();
+    }
     public Activity findActivityById(long id)
     {
         return activityRepository.findByActivityId(id);
@@ -69,6 +74,28 @@ public class ActivityService implements ActivityServiceImp {
             return new ActivityExecution(ActivityState.NULL_ACTIVITYID);
         }
     }
+
+    /**
+     * 分页查找该活动下的评论
+     * @param pageIndex
+     * @param pageSize
+     * @param activityId
+     * @return
+     */
+//   public List<UserActivityComment> findAll(int pageIndex,int pageSize,long activityId)
+//   {
+//       if(pageIndex >=0 && pageSize>0 && activityId>0)
+//       {
+//           Sort sort=new Sort(Sort.Direction.DESC,"createTime");
+//           Pageable pageable= PageRequest.of(pageIndex,pageSize,sort);
+//           Activity activity=activityRepository.findByActivityId(activityId);
+//           Page<UserActivityComment> userActivityComments=userActivityCommentRepository.findByActivity(activity,pageable);
+//           return userActivityComments.getContent();
+//       }
+//       else {
+//           return null;
+//       }
+//   }
     /**
      * 组合查询，活动类别，组织名称，活动时间，活动状态（未开始，已经结束），活动标签
      * @param model
@@ -76,7 +103,7 @@ public class ActivityService implements ActivityServiceImp {
      * @param pageSize
      * @return
      */
-    public ActivityExecution findSearch(Activity model,int pageIndex,int pageSize)
+    public ActivityExecution findSearch(Activity model,int pageIndex,int pageSize,String search)
     {
         if(model!=null && pageIndex>=0 && pageSize>0)
         {
@@ -93,18 +120,21 @@ public class ActivityService implements ActivityServiceImp {
                     if (model.getOrganization()!=null) {
                         list.add(cb.equal(root.get("organization").as(Organization.class),model.getOrganization()));
                     }
-                    //匹配活动名称
-                    if(StringUtils.isNotBlank(model.getActivityName()))
+                    //匹配活动名称,活动简介
+                    if(StringUtils.isNotBlank(search))
                     {
-                        list.add(cb.like(root.get("activityName").as(String.class), "%" + model.getActivityName() + "%"));
+                        Predicate pred=cb.and(cb.or(cb.like(root.get("activityName"),"%"+search+"%"),
+                                cb.or(cb.like(root.get("activityDesc"),"%"+search+"%"))));
+                     //   list.add(cb.like(root.get("activityName").as(String.class), "%" + model.getActivityName() + "%"));
+                        list.add(pred);
                     }
                     // 活动类别
                     if (model.getCategory() != null) {
                         list.add(cb.equal(root.get("category").as(ActivityCategory.class), model.getCategory()));
                     }
                     //匹配状态
-                    if (StringUtils.isNotBlank(model.getStatus())) {
-                        list.add(cb.like(root.get("status").as(String.class), "%" + model.getStatus() + "%"));
+                    if (model.getStatus()!=0) {
+                        list.add(cb.equal(root.get("status").as(Integer.class), model.getStatus()));
                     }
                     //匹配标签
                     if (model.getTags() != null) {

@@ -1,25 +1,27 @@
 package com.example.graduatedesign.service;
 
 
-import com.example.graduatedesign.Model.Activity;
-import com.example.graduatedesign.Model.Organization;
-import com.example.graduatedesign.Model.Tags;
-import com.example.graduatedesign.Model.User;
+import com.example.graduatedesign.Model.*;
+import com.example.graduatedesign.dao.ActivityCommentRepository;
 import com.example.graduatedesign.dao.ActivityRepository;
 import com.example.graduatedesign.dao.OrganizationRepository;
 import com.example.graduatedesign.dao.UserRepostory;
 import com.example.graduatedesign.dto.ActivityExecution;
+import com.example.graduatedesign.dto.OrganizationExecution;
 import com.example.graduatedesign.dto.UserExecution;
 import com.example.graduatedesign.enums.ActivityState;
+import com.example.graduatedesign.enums.OrganizationState;
 import com.example.graduatedesign.enums.UserStateEnum;
 import com.example.graduatedesign.service.serviceImp.UserServiceImp;
 import com.example.graduatedesign.util.FileUtil;
 import com.example.graduatedesign.util.ImageUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import sun.security.provider.MD5;
@@ -38,6 +40,8 @@ public class UserService implements UserServiceImp {
     ActivityRepository activityRepository;
     @Autowired
     OrganizationRepository organizationRepository;
+    @Autowired
+    ActivityCommentRepository activityCommentRepository;
     public User findUserByName(String name)
  {
      return userRepostory.findByUserName(name);
@@ -54,9 +58,6 @@ public class UserService implements UserServiceImp {
     @Transactional
     public UserExecution register(User user, MultipartFile profileImg)
     {
-        //将图片存入文件
-        //获取存入路径
-        //将User对象存入数据库
         log.info("begin register:");
         if (user == null || user.getPassword() == null) {
             return new UserExecution(UserStateEnum.NULL_AUTH_INFO);
@@ -91,9 +92,6 @@ public class UserService implements UserServiceImp {
         String profileImgAddr = ImageUtil.generateThumbnail(profileImg, dest);//创建文件，获取文件名
         user.setProfile(profileImgAddr);
         log.info("profile dir:"+user.getProfile());
-    }
-    public User checkLogin(String username, String password) {
-        return userRepostory.findByUserNameAndPassword(username, password);
     }
     @Transactional
     public UserExecution modifyUser(User user,MultipartFile profileImg)
@@ -180,6 +178,10 @@ public class UserService implements UserServiceImp {
         userRepostory.save(user1);
     }
     public  ActivityExecution addMyLikeActivity(User user, long activityId,boolean isAdd) {
+        if(isAdd)
+            log.info("关注活动");
+        else
+            log.info("取消关注活动");
         Activity activity=activityRepository.findByActivityId(activityId);
         User user1=userRepostory.findByUserId(user.getUserId());
         if(isAdd)
@@ -195,10 +197,40 @@ public class UserService implements UserServiceImp {
             return new ActivityExecution(ActivityState.FAILURE,activity);
         }
     }
-    public ActivityExecution addMySignUpActivity(User user,long activityId) {
+    public boolean addLikeComment(User user,long commentId,boolean islike)
+    {
+        if(islike)
+            log.info("关注活动");
+        else
+            log.info("取消关注活动");
+        ActivityComment activityComment=activityCommentRepository.findByCommentId(commentId);
+        User user1=userRepostory.findByUserId(user.getUserId());
+        if(islike)
+        {
+            if(user1.getLikeComments().contains(activityComment))
+                return false;
+            user1.getLikeComments().add(activityComment);
+        }
+        else
+            user1.getLikeComments().remove(activityComment);
+        if(userRepostory.saveAndFlush(user1)!=null)
+        {
+            activityComment.setCommentLikeCount(activityComment.getLikeUsers().size());
+            activityCommentRepository.save(activityComment);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    public ActivityExecution addMySignUpActivity(User user,long activityId,boolean isSignUp) {
         User user1=userRepostory.findByUserId(user.getUserId());
         Activity activity=activityRepository.findByActivityId(activityId);
-        user1.getLikeActivities().add(activity);
+        if(isSignUp)
+            user1.getSignUpActivities().add(activity);
+        else
+            user1.getSignUpActivities().remove(activity);
         if(userRepostory.saveAndFlush(user1)!=null)
         {
             return new ActivityExecution(ActivityState.SUCCESS,activity);
@@ -208,10 +240,130 @@ public class UserService implements UserServiceImp {
             return new ActivityExecution(ActivityState.FAILURE,activity);
         }
     }
-    public User addMyLikeOrganization(User user, long organizationId,boolean isAdd){
-        User user1=userRepostory.findByUserId(user.getUserId());
+    public OrganizationExecution addMyLikeOrganization(User user, long organizationId, boolean isAdd){
+        if(isAdd)
+            log.info("关注组织");
+        else
+            log.info("取消关注组织");
         Organization organization=organizationRepository.findByOrganizationId(organizationId);
-        user1.getLikeOrganizations().add(organization);
-        return userRepostory.saveAndFlush(user1);
+        User user1=userRepostory.findByUserId(user.getUserId());
+        if(isAdd)
+            user1.getLikeOrganizations().add(organization);
+        else
+            user1.getLikeOrganizations().remove(organization);
+        if(userRepostory.saveAndFlush(user1)!=null)
+        {
+            return new OrganizationExecution(OrganizationState.SUCCESS,organization);
+        }
+        else
+        {
+            return new OrganizationExecution(OrganizationState.FAILURE,organization);
+        }
     }
+    public boolean isLike(long activityId,User user)
+    {
+        log.info("判断是否关注");
+        if(user!=null)
+        {
+            User user1=userRepostory.findByUserId(user.getUserId());
+            log.info(user1.getLikeActivities().toString());
+            if(user1!=null)
+            {
+                Activity activity=activityRepository.findByActivityId(activityId);
+                return user1.getLikeActivities().contains(activity);
+            }
+            else
+                return false;
+        }
+        else {
+            return false;
+        }
+
+    }
+    public boolean isSignUp(long activityId,User user)
+    {
+        log.info("判断是否报名成功：");
+        if(user!=null) {
+            User user1 = userRepostory.findByUserId(user.getUserId());
+            log.info(user1.getSignUpActivities().toString());
+            Activity activity = activityRepository.findByActivityId(activityId);
+            if(user1!=null)
+                return user1.getSignUpActivities().contains(activity);
+            else
+                return false;
+        }
+        else
+            {
+             return false;
+        }
+    }
+
+    /**
+     * 检查登录
+     * @param email
+     * @param password
+     * @return
+     */
+    public UserExecution checkLogin(String email,String password)
+    {
+        if(StringUtils.isNotBlank(email) && StringUtils.isNotBlank(password))
+        {
+            User user=userRepostory.findByEmailAndPassword(email,password);
+            if(user!=null)
+                return new UserExecution(UserStateEnum.SUCCESS,user);
+            else
+                return new UserExecution(UserStateEnum.LOGINFAIL);
+        }
+        else
+        {
+            return new UserExecution(UserStateEnum.NULL_AUTH_INFO);
+        }
+
+    }
+
+    /**
+     * 修改密码
+     * @param userId
+     * @param password
+     * @return
+     */
+    public UserExecution updatePassword(long userId,String password)
+    {
+        if(StringUtils.isNotBlank(password))
+        {
+            User user=userRepostory.findByUserId(userId);
+            if(user!=null)
+            {
+                if(user.getPassword().equals(password))
+                {
+                    return new UserExecution(UserStateEnum.REPEAT);
+                }
+                user.setPassword(password);
+                User newUser=userRepostory.saveAndFlush(user);
+                return new UserExecution(UserStateEnum.SUCCESS,user);
+            }
+            else {
+                return new UserExecution(UserStateEnum.NULL_AUTH_INFO);
+            }
+        }
+        else {
+            return new UserExecution(UserStateEnum.NULL_AUTH_INFO);
+        }
+    }
+
+    /**
+     * 验证用户名是否唯一
+     * @param
+     * @return
+     */
+    public boolean checkEmail(String email){
+        User users = userRepostory.findByEmail(email);
+        return users==null;
+    }
+    public boolean checkNiceame(String nickname){
+        User users = userRepostory.findByNickName(nickname);
+        return users==null;
+    }
+
+
 }

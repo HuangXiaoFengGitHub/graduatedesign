@@ -39,3 +39,71 @@ function getQueryString(name) {
 function changeVerifyCode(img) {
 	img.src = "/tool/kaptcha?" + Math.floor(Math.random() * 100);
 }
+
+function getActivityStatus(status)
+{
+	if (status == 1) {
+		return '审核中';
+	} else if (status ==2) {
+		return '未通过审核';
+	}  else if(status==3) {
+		return '审核通过';
+	} else if (status==4)
+	{
+		return '未开始';
+	} else if(status==5)
+	{
+		return '正在进行'
+	} else if(status==6)
+	{
+		return '已结束';
+	}
+	else {
+		return '不明状态';
+	}
+}
+//侧边栏的登出
+$('#logout').click(function() {
+	var logout='/user/logout';
+	$.confirm('确定退出吗?', function () {
+		$.ajax({
+			url: logout,
+			type: 'POST',
+			//这个是全部发送的内容 data
+			data: {
+				statusChange: true
+			},
+			dataType: 'json',
+			success: function (data) {
+				if (data.success) {
+					$.toast('退出成功！');
+					window.location.href = '/frontend/toLogin';
+				} else {
+					$.toast('退出失败！');
+				}
+			}
+		});
+	});
+});
+//侧边栏的修改个人信息
+$('#user-edit').click(function () {
+	$.ajax({
+		url : "/user/getcurrentuser",
+		type : "get",
+		dataType : "json",
+		success : function(data) {
+			if (data.success) {
+				window.location.href = '/frontend/toRegister?userId='+data.userId;
+			}
+			else {
+				var errMsg=data.errMsg;
+				$.toast(errMsg);
+			}
+		}
+	});
+
+});
+//修改密码
+$('#update-password').click(function () {
+	window.location.href = '/frontend/updatepassword';
+});

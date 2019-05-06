@@ -11,6 +11,9 @@ import java.util.Set;
 public interface UserRepostory extends JpaRepository<User,Long> {
     User findByUserId(long id);
     User findByUserName(String name);
+    User findByNickName(String nickName);
+    User findByEmail(String email);
     //List<User> findByUserName(String name);
     User findByUserNameAndPassword(String username,String password);
+    User findByEmailAndPassword(String email,String password);
 }

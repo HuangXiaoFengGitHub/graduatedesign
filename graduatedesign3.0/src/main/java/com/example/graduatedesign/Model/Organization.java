@@ -1,5 +1,6 @@
 package com.example.graduatedesign.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
@@ -21,6 +22,7 @@ public class Organization {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long organizationId;
+    @JsonIgnore
     @OneToMany(mappedBy = "organization",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private Set<Activity> activities;
     private String organizationName;
@@ -30,16 +32,20 @@ public class Organization {
     private long parentId;
     private String wechatImg;
     private String wechatAccount;
-    //private String wechatName;
+    private String wechatName;
     private long likeCount;
     private long commentCount;
     private String password;
     private long activityCount;
     private int grade; //0-100分
     private int priority; //0-10分
+    private int enableStatus;//审核状态
     private String email;
     private Calendar createTime;
     private Calendar updateTime;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "t_organization_category")
+    private OrganizationCategory organizationCategory;
     @OneToMany(mappedBy = "organization",cascade = CascadeType.ALL)
     private Set<ManagerOrganization> managerOrganizations;
     @OneToMany(mappedBy = "organization",cascade = CascadeType.ALL)
@@ -56,8 +62,8 @@ public class Organization {
     private Set<OrganizationComment> organizationComments;
     @OneToMany(mappedBy = "organization")
     private Set<OrganizationScore> organizationScores;
-    @ManyToMany(mappedBy ="likeOrganizations",fetch = FetchType.LAZY)
     //关注
+    @ManyToMany(mappedBy ="likeOrganizations",fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = { "likeOrganizations" })
     private Set<User>  likeUsers=new HashSet<>();
     //标签

@@ -41,6 +41,25 @@ public class UserController {
     @Autowired
     AcademyService academyService;
 
+    @RequestMapping("/getcurrentuser")
+    @ResponseBody
+    public Map<String,Object> getCurrentUser(HttpServletRequest request)
+    {
+        log.info("get current user:");
+        Map<String,Object> map=new HashMap<>();
+        User user=(User) request.getSession().getAttribute("user");
+        if(user!=null)
+        {
+            map.put("success",true);
+            map.put("userId",user.getUserId());
+        }
+        else {
+            map.put("success",false);
+            map.put("errMsg","你尚未登录");
+        }
+        return map;
+    }
+
     @RequestMapping("/registerInitInfo")
     @ResponseBody
     public Map<String,Object> registerInitInfo()
@@ -68,14 +87,11 @@ public class UserController {
      */
     @RequestMapping("/userRegister")
     @ResponseBody
-    public Map<String,Object> register(@RequestParam("thumbnail") MultipartFile profileImg,Model model, HttpServletRequest request,HttpServletResponse response)
+    public Map<String,Object> register(@RequestParam("thumbnail") MultipartFile profileImg, HttpServletRequest request,HttpServletResponse response)
     {
         //获取user对象，图片对象，和验证码对象
         Map<String,Object> map=new HashMap<>();
-        map.put("success",false);
         if (!CodeUtil.checkVerifyCode(request)) {
-            model.addAttribute("success", false);
-            model.addAttribute("errMsg", "输入了错误的验证码");
             log.info("验证码错误");
             map.put("success",false);
             map.put("isWrong",true);
@@ -89,12 +105,6 @@ public class UserController {
         log.info(userAcademy);
         String userStr= HttpServletRequestUtil.getString(request,"user");
         log.info(userStr);
-        if(profileImg.isEmpty())
-        {
-            model.addAttribute("message", "Please select a file to upload");
-           // return "wechat/userRegisterResult";
-            return map;
-        }
         log.info("upload succesfully!");
 //        MultipartHttpServletRequest multipartRequest=null;
 //        CommonsMultipartFile profileImg=null;
@@ -116,6 +126,16 @@ public class UserController {
         try {
             if(userStr!=null&&userStr.trim()!="") {
                 user = objectMapper.readValue(userStr, User.class);
+                if(userService.checkEmail(user.getEmail()))
+                {
+                    map.put("success",false);
+                    map.put("errMsg","不能使用一个邮箱重复注册");
+                }
+                if(userService.checkNiceame(user.getNickName()))
+                {
+                    map.put("success",false);
+                    map.put("errMsg","昵称重复");
+                }
                 log.info("转换成功");
             }
             else {
@@ -123,8 +143,8 @@ public class UserController {
                 map.put("errMsg","传入了空的注册信息");
             }
         } catch (IOException e) {
-            model.addAttribute("success",false);
-            model.addAttribute("errMsg",e.toString());
+            map.put("success",false);
+            map.put("errMsg",e.toString());
          //   return "wechat/userRegisterResult";
             return map;
         }
@@ -139,22 +159,22 @@ public class UserController {
                 UserExecution le = userService.register(user,
                         profileImg);
                 if (le.getState() == UserStateEnum.SUCCESS.getState()) {
-                    model.addAttribute("success", true);
+                    map.put("success", true);
                 } else {
-                    model.addAttribute("success", false);
-                    model.addAttribute("errMsg", le.getStateInfo());
+                   map.put("success", false);
+                   map.put("errMsg", le.getStateInfo());
                 }
             } catch (RuntimeException e) {
-                model.addAttribute("success", false);
-                model.addAttribute("errMsg", e.toString());
+                map.put("success", false);
+                map.put("errMsg", e.toString());
         //        return "wechat/userRegisterResult";
                 return map;
             }
         }
         else
         {
-            model.addAttribute("success",false);
-            model.addAttribute("errMsg","请输入注册信息");
+            map.put("success",false);
+            map.put("errMsg","请输入注册信息");
         }
         //return "wechat/userRegisterResult";
         return map;
@@ -166,23 +186,86 @@ public class UserController {
     }
 
     @RequestMapping("/login")
-    public void login(String email,
-                      String password,
-                      HttpServletRequest request,
-                      HttpServletResponse response) throws IOException {
-        //
-        User user =userService.checkLogin(email, password);
-        if (user != null) {
+    @ResponseBody
+    public Map<String,Object> login(HttpServletRequest request) throws IOException {
+        Map<String,Object> map=new HashMap<>();
+        //输入三次错误的密码就需要验证
+        boolean needVerify=HttpServletRequestUtil.getBoolean(request,"needVerify");
+        if (needVerify && !CodeUtil.checkVerifyCode(request)) {
+            log.info("验证码错误");
+            map.put("success",false);
+            map.put("errMsg","验证码错误");
+            return map;
+        }
+        String email=HttpServletRequestUtil.getString(request,"email");
+        String password=HttpServletRequestUtil.getString(request,"password");
+        log.info(email);
+        log.info(password);
+        UserExecution userExecution=userService.checkLogin(email,password);
+        if (userExecution.getState()==1) {
             //登录成功 重定向到首页
-            request.getSession().setAttribute("user", user);
-            response.sendRedirect("/wechat/index");
+            request.getSession().setAttribute("user",userExecution.getUser());
+            //保存session
+            User user=(User)request.getSession().getAttribute("user");
+            log.info(user.toString());
+            map.put("success",true);
         } else {
             log.info("登录失败");
-            request.getSession().setAttribute("error","登录失败，邮箱或者密码错误");
-            response.sendRedirect("/organization/error");
+           map.put("success",false);
+           map.put("errMsg",userExecution.getStateInfo());
             //     throw new LoginException("登录失败！ 邮箱或者密码错误");
         }
+        return map;
     }
+    @RequestMapping("/updatePassword")
+    @ResponseBody
+    public Map<String,Object> updatePwd(HttpServletRequest request)
+    {
+        log.info("修改密码：");
+        Map<String,Object> map=new HashMap<>();
+        if (!CodeUtil.checkVerifyCode(request)) {
+            log.info("验证码错误");
+            map.put("success",false);
+            map.put("errMsg","验证码错误");
+            return map;
+        }
+        String password=HttpServletRequestUtil.getString(request,"password");
+        String newPassword=HttpServletRequestUtil.getString(request,"newPassword");
+        String repeatPassword=HttpServletRequestUtil.getString(request,"repeatPassword");
+        log.info("password:"+password);
+        if(!repeatPassword.equals(newPassword))
+        {
+            map.put("success",false);
+            map.put("errMsg","前后密码不一致！请确认密码！");
+            return map;
+        }
+        if(password.equals(newPassword))
+        {
+            map.put("success",false);
+            map.put("errMsg","新旧密码一致！");
+            return map;
+        }
+        User user=(User)request.getSession().getAttribute("user");
+        if(user==null)
+        {
+            map.put("success",false);
+            map.put("errMsg","你未登录！！");
+            return map;
+        }
+        UserExecution userExecution=userService.updatePassword(user.getUserId(),password);
+        if (userExecution.getState()==1) {
+            //登录成功 重定向到首页
+            map.put("success",true);
+        } else {
+            map.put("success",false);
+            map.put("errMsg",userExecution.getStateInfo());
+            //     throw new LoginException("登录失败！ 邮箱或者密码错误");
+        }
+        return map;
+    }
+
+
+
     @RequestMapping("/getUserInfo")
     @ResponseBody
     public Map<String,Object> getUserInfoByUserId(@RequestParam(value = "userId",defaultValue = "0") long userId)
@@ -303,26 +386,17 @@ public class UserController {
      * 登出
      */
     @RequestMapping("/logout")
-    public void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        request.getSession().removeAttribute("user");
-        response.sendRedirect("/wechat/toLogin");
-    }
-
-
-    /**
-     * 验证用户名是否唯一
-     * @param username
-     * @return
-     */
     @ResponseBody
-    @RequestMapping("/checkUsername.do")
-    public ResultBean<Boolean> checkUsername(String username){
-      User users = userService.findUserByName(username);
-        if (users==null){
-            return new ResultBean<>(true);
-        }
-        return new ResultBean<>(false);
+    public Map<String,Object> logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        Map<String,Object> map=new HashMap<>();
+        //注销session
+        request.getSession().setAttribute("user",null);
+        map.put("success",true);
+        //response.sendRedirect("/wechat/toLogin");
+        return map;
     }
+
+
     @RequestMapping("/registerResult")
     public String loginResult()
     {

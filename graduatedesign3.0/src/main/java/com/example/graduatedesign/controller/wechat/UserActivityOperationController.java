@@ -32,8 +32,10 @@ public class UserActivityOperationController {
     @ResponseBody
     public Map<String,Object> addLikeActivity(@RequestParam(value = "activityId",defaultValue = "0") long activityId,HttpServletRequest request)
     {
+        log.info("关注活动："+activityId);
         Map<String,Object> map=new HashMap<>();
-        User currentUser=(User) request.getSession().getAttribute("user");
+        //User currentUser=(User) request.getSession().getAttribute("user");
+        User currentUser=userService.findUserByUserId(1L);
         if(activityId >0 )
         {
             ActivityExecution activityExecution =userService.addMyLikeActivity(currentUser,activityId,true);
@@ -43,7 +45,7 @@ public class UserActivityOperationController {
             }
             else {
                 map.put("success",false);
-                map.put("errMsg","关注失败");
+                map.put("errMsg",activityExecution.getStateInfo());
             }
         }
         else
@@ -57,14 +59,16 @@ public class UserActivityOperationController {
     @ResponseBody
     public Map<String,Object> cancelLikeActivity(@RequestParam(value = "activityId",defaultValue = "0") long activityId,HttpServletRequest request)
     {
-        log.info("取消报名2：");
+        log.info("取消关注2：");
         log.info(activityId+"");
         Map<String,Object> map=new HashMap<>();
         //User currentUser=(User) request.getSession().getAttribute("user");
         User currentUser=userService.findUserByUserId(1L);
+        log.info(currentUser.getLikeActivities().toString());
         if(activityId >0 )
         {
             ActivityExecution activityExecution =userService.addMyLikeActivity(currentUser,activityId,false);
+            log.info(currentUser.getLikeActivities().toString());
             if(activityExecution.getState()==1 )
             {
                 map.put("success",true);
@@ -84,13 +88,16 @@ public class UserActivityOperationController {
     }
 
     @RequestMapping(value = "/signUp")
+    @ResponseBody
     public Map<String,Object> signUp(@RequestParam(value = "activityId",defaultValue = "0") long activityId,HttpServletRequest request)
     {
+        log.info("关注活动");
         Map<String,Object> map=new HashMap<>();
-        User currentUser=(User) request.getSession().getAttribute("user");
+        //User currentUser=(User) request.getSession().getAttribute("user");
+        User currentUser=userService.findUserByUserId(1L);
         if(activityId >0 )
         {
-            ActivityExecution activityExecution =userService.addMySignUpActivity(currentUser,activityId);
+            ActivityExecution activityExecution =userService.addMySignUpActivity(currentUser,activityId,true);
             if(activityExecution.getState()==1 )
             {
                 map.put("success",true);
@@ -103,12 +110,39 @@ public class UserActivityOperationController {
         else
         {
             map.put("success",false);
-            map.put("errMsg","未选择组织");
+            map.put("errMsg","未选择活动");
+        }
+        return map;
+    }
+    @RequestMapping(value = "/cancelSignUp")
+    @ResponseBody
+    public Map<String,Object> cancelSignUp(@RequestParam(value = "activityId",defaultValue = "0") long activityId,HttpServletRequest request)
+    {
+        log.info("取消报名：");
+        Map<String,Object> map=new HashMap<>();
+        //User currentUser=(User) request.getSession().getAttribute("user");
+        User currentUser=userService.findUserByUserId(1L);
+        if(activityId >0)
+        {
+            ActivityExecution activityExecution =userService.addMySignUpActivity(currentUser,activityId,false);
+            if(activityExecution.getState()==1 )
+            {
+                map.put("success",true);
+            }
+            else {
+                map.put("success",false);
+                map.put("errMsg","取消报名失败");
+            }
+        }
+        else
+        {
+            map.put("success",false);
+            map.put("errMsg","未选择活动");
         }
         return map;
     }
     /**
-     * 填充关注活动信息的方法
+     * 获取关注活动信息的方法
      * @param request
      * @return
      */

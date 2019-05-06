@@ -1,5 +1,6 @@
+//我关注的活动界面
 $(function () {
-
+	//取消报名的URL
 	var deleteUrl='/user/activityOperate/cancelLikeActivity';
 	function getlist(e) {
 		$.ajax({
@@ -37,6 +38,7 @@ $(function () {
 	function cancel(id) {
 	    return '<a href="/user/activityOperate/cancelLikeActivity?activityId='+id+'">取消报名</a>'
     }
+    //查看活动详情
 	function goShop(status, id) {
 		if (status >=3) {
 			return '<a href="/activity/getActivityDetail?activityId='+ id +'">进入</a>';
@@ -46,99 +48,84 @@ $(function () {
 	}
 
 	function shopStatus(status) {
-		if (status == 0) {
+		if (status == 1) {
 			return '审核中';
-		} else if (status == -1) {
-			return '店铺非法';
-		} else {
+		} else if (status ==2) {
+			return '未通过审核';
+		}  else if(status==3) {
 			return '审核通过';
+		} else if (status==4)
+		{
+			return '未开始';
+		} else if(status==5)
+		{
+			return '正在进行'
+		} else if(status==6)
+		{
+			return '已结束';
+		}
+		else {
+			return '不明状态';
 		}
 	}
-// 调用删除操作
+// 取消关注的函数
 	function deleteItem(id) {
-		// var product = {};
-		// product.productId = id;
-		//product.enableStatus = enableStatus;
-		// $.confirm({
-		// 	title: 'Confirm!',
-		// 	content: '确定取消报名么？',
-		// 	confirm: function(){
-		// 		$.ajax({
-		// 			url : deleteUrl,
-		// 			type : 'POST',
-		// 			//这个是全部发送的内容 data
-		// 			data : {
-		// 				activityId: id,
-		// 				statusChange : true
-		// 			},
-		// 			dataType : 'json',
-		// 			success : function(data) {
-		// 				if (data.success) {
-		// 					toastr.info('操作成功！');
-		// 					getlist();
-		// 				} else {
-		// 					toastr.info('操作失败！');
-		// 				}
-		// 			}
-		// 		});
-		// 	},
-		// 	cancel: function(){
-		// 	}
-		// });
-		$.confirm({
-			title: 'What is up?',
-			content: '确定要取消关注该组织么？',
-			type: 'green',
-			buttons: {
-				ok: {
-					text: "ok!",
-					btnClass: 'btn-primary',
-					keys: ['enter'],
-					action: function(){
-						$.ajax({
-							url : deleteUrl,
-							type : 'POST',
-							//这个是全部发送的内容 data
-							data : {
-								activityId: id,
-								statusChange : true
-							},
-							dataType : 'json',
-							success : function(data) {
-								if (data.success) {
-									toastr.info('取消成功！');
-									getlist();
-								} else {
-									toastr.info('取消失败！');
-								}
-							}
-						});
-					}
+		$.confirm('Are you sure?', function () {
+			$.ajax({
+				url : deleteUrl,
+				type : 'POST',
+				//这个是全部发送的内容 data
+				data : {
+					activityId: id,
+					statusChange : true
 				},
-				cancel: function(){
-					console.log('the user clicked cancel');
+				dataType : 'json',
+				success : function(data) {
+					if (data.success) {
+						$.toast('取消关注成功！');
+						//刷新界面
+						getlist();
+					} else {
+						$.toast('取消关注失败！');
+					}
 				}
-			}
+			});
 		});
-		// $.confirm('确定么?', function() {
-		// 	$.ajax({
-		// 		url : deleteUrl,
-		// 		type : 'POST',
-		// 		//这个是全部发送的内容 data
-		// 		data : {
-		// 			activityId: id,
-		// 			statusChange : true
-		// 		},
-		// 		dataType : 'json',
-		// 		success : function(data) {
-		// 			if (data.success) {
-		// 				toastr.info('操作成功！');
-		// 				getlist();
-		// 			} else {
-		// 				toastr.info('操作失败！');
+		// $.confirm({
+		// 	title: 'What is up?',
+		// 	content: '确定要取消关注该组织么？',
+		// 	type: 'green',
+		// 	buttons: {
+		// 		ok: {
+		// 			text: "ok!",
+		// 			btnClass: 'btn-primary',
+		// 			keys: ['enter'],
+		// 			action: function(){
+		// 				$.ajax({
+		// 					url : deleteUrl,
+		// 					type : 'POST',
+		// 					//这个是全部发送的内容 data
+		// 					data : {
+		// 						activityId: id,
+		// 						statusChange : true
+		// 					},
+		// 					dataType : 'json',
+		// 					success : function(data) {
+		// 						if (data.success) {
+		// 							toastr.info('取消关注成功！');
+		// 							//刷新界面
+		// 							getlist();
+		// 						} else {
+		// 							toastr.info('取消关注失败！');
+		// 						}
+		// 					}
+		// 				});
 		// 			}
+		// 		},
+		// 		cancel: function(){
+		// 			console.log('the user clicked cancel');
 		// 		}
-		// 	});
+		// 	}
 		// });
 	}
 //定义触发事件
@@ -169,7 +156,5 @@ $(function () {
 			}
 		});
 	});
-
-
 	getlist();
 });

@@ -9,7 +9,6 @@ import java.util.*;
 @Entity(name="t_tags")
 @Getter
 @Setter
-@ToString(exclude = "users")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor

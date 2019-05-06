@@ -13,6 +13,7 @@ $(function() {
 	var userInfoUrl = '/user/getUserInfo?userId=' + userId;
 	var initUrl = '/user/registerInitInfo';
 	var registerUrl = '/user/userRegister';
+	//修改用户信息
 	if (isEdit) {
 		registerUrl= '/user/userEdit?userId='+userId;
 	}
@@ -75,30 +76,6 @@ $(function() {
 	} else {
 		getCategory();
 	}
-	toastr.options = {
-
-		"closeButton": false, //是否显示关闭按钮
-
-		"debug": false, //是否使用debug模式
-
-		"positionClass": "toast-top-full-width",//弹出窗的位置
-
-		"showDuration": "300",//显示的动画时间
-
-		"hideDuration": "1000",//消失的动画时间
-
-		"timeOut": "5000", //展现时间
-
-		"extendedTimeOut": "1000",//加长展示时间
-
-		"showEasing": "swing",//显示时的动画缓冲方式
-
-		"hideEasing": "linear",//消失时的动画缓冲方式
-
-		"showMethod": "fadeIn",//显示时的动画方式
-
-		"hideMethod": "fadeOut" //消失时的动画方式
-	};
 	//var registerUrl = '/user/userRegister';//后台方法,在controller层中实现，并写出对应的mappering
 	$('#submit').click(function() { //点击提交的时候响应，获取提交的内容，表单提交的属性id是“submit”
 		var user = {};//变量，json对象
@@ -139,11 +116,11 @@ $(function() {
 		formData.append('userAcademy',userAcademy);
 		var verifyCodeActual = $('#j_captcha').val(); //接收验证码，验证码的控件id是j_captcha
 		if (!thumbnail && !isEdit) {
-			toastr.info('请上传头像！');
+			$.toast('请上传头像！');
 			return;
 		}
 		if (!verifyCodeActual) {
-			toastr.info('请输入验证码！');
+			$.toast('请输入验证码！');
 			return;
 		}
 		formData.append("verifyCodeActual", verifyCodeActual);
@@ -158,21 +135,21 @@ $(function() {
 			//回调
 			success : function(data) { //接受到后台返回的data信息，这里要实现定义一个后台方法，这里data就是返回的json字符串
 				if (data.success) {
-					toastr.info('提交成功！');
+					$.toast('注册成功！');
 					window.location.href = '/user/toLogin';
 				}
 				else {
-					toastr.info('提交失败！');
+					var errMsg=data.errMsg;
+					$.toast('提交失败！'+errMsg);
 					if(data.isWrong)
-						toastr.info('验证码错误');
+						$.toast('验证码错误');
 					//window.location.href ='/user/toRegister';
 					$('#captcha_img').click();//每次注册完之后更换一下验证码
 				}
 			}
 		});
 	});
-
 	$('#back').click(function() {
-		window.location.href = '/wechat/index';
+		window.location.href = '/frontend/index';
 	});
 });

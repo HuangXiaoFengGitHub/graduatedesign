@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Controller
 @Slf4j
@@ -58,6 +59,7 @@ public class ActivityCategoryController {
     public Map<String,Object> getActivityTags(@RequestParam(defaultValue = "0") long activityCategoryId)
     {
         log.info("获取"+activityCategoryId+"下的活动标签：");
+        Optional<ActivityCategory> activityCategory=activityCategoryService.findById(activityCategoryId);
         Map<String,Object> map=new HashMap<>();
         //从前端获取父类别id
         List<Tags> tags=null;
@@ -67,6 +69,7 @@ public class ActivityCategoryController {
             try{
                 tags=tagsService.findByCategory(activityCategoryId);
                 map.put("success",true);
+                map.put("activityCategoryName",activityCategory.get().getActivityCategoryName());
                 map.put("tagList",tags);
             }
             catch (Exception e)
@@ -79,6 +82,7 @@ public class ActivityCategoryController {
         else {
             try{
                 tags=tagsService.findAll();
+                map.put("activityCategoryName","全部活动");
                 map.put("success",true);
                 map.put("tagList",tags);
             }

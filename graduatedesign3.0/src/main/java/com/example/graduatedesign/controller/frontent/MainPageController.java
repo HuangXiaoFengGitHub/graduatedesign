@@ -2,6 +2,7 @@ package com.example.graduatedesign.controller.frontent;
 
 import com.example.graduatedesign.Model.ActivityCategory;
 import com.example.graduatedesign.Model.Headline;
+import com.example.graduatedesign.Model.User;
 import com.example.graduatedesign.enums.ActivityCategoryStateEnum;
 import com.example.graduatedesign.enums.HeadLineStateEnum;
 import com.example.graduatedesign.service.ActivityCategoryService;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,13 +35,16 @@ public class MainPageController {
 	 */
 	@RequestMapping(value = "/listMainPageInfo", method = RequestMethod.GET)
 	@ResponseBody
-	private Map<String, Object> list1stActivityCategory() {
+	private Map<String, Object> list1stActivityCategory(HttpServletRequest request) {
 		Map<String, Object> modelMap = new HashMap<String, Object>();
 		List<ActivityCategory> activityCategoryList = new ArrayList<ActivityCategory>();
 		try {
 			//获取一级列表，parentId为1的类别
 			activityCategoryList = activityCategoryService.findFirstLever();
 			modelMap.put("activityCategoryList", activityCategoryList);
+			User user=(User)request.getSession().getAttribute("user");
+			if(user!=null)
+				modelMap.put("username",user.getUserName());
 		} catch (Exception e) {
 			e.printStackTrace();
 			ActivityCategoryStateEnum s = ActivityCategoryStateEnum.INNER_ERROR;
