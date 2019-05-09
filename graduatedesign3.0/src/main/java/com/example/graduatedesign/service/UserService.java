@@ -15,6 +15,7 @@ import com.example.graduatedesign.enums.UserStateEnum;
 import com.example.graduatedesign.service.serviceImp.UserServiceImp;
 import com.example.graduatedesign.util.FileUtil;
 import com.example.graduatedesign.util.ImageUtil;
+import com.example.graduatedesign.util.MD5Util;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.weaver.ast.Or;
@@ -46,6 +47,10 @@ public class UserService implements UserServiceImp {
  {
      return userRepostory.findByUserName(name);
  }
+    public User findManagerByName(String name)
+    {
+        return userRepostory.findByUserNameAndIsManager(name,1);
+    }
     public long save(User user)
     {
       return  userRepostory.saveAndFlush(user).getUserId();
@@ -64,7 +69,7 @@ public class UserService implements UserServiceImp {
         }
         try {
             user.setCreateTime(Calendar.getInstance());
-         //   user.setPassword(MD5.getMd5(user.getPassword()));
+         //   user.setPassword(MD5Util.getMd5(user.getPassword()));
                 if (profileImg != null) {
                     user.setIsBan(1);
                     try {
@@ -74,6 +79,9 @@ public class UserService implements UserServiceImp {
                                 + e.getMessage());
                     }
                 }
+                //MD5加密
+                String password= MD5Util.getMd5(user.getPassword());
+                user.setPassword(password);
             long effectedNum = this.save(user);
             log.info("effectedNum:"+effectedNum+"");
             if (effectedNum <= 0) {
@@ -308,7 +316,8 @@ public class UserService implements UserServiceImp {
     {
         if(StringUtils.isNotBlank(email) && StringUtils.isNotBlank(password))
         {
-            User user=userRepostory.findByEmailAndPassword(email,password);
+            String password1=MD5Util.getMd5(password);
+            User user=userRepostory.findByEmailAndPassword(email,password1);
             if(user!=null)
                 return new UserExecution(UserStateEnum.SUCCESS,user);
             else
@@ -318,7 +327,6 @@ public class UserService implements UserServiceImp {
         {
             return new UserExecution(UserStateEnum.NULL_AUTH_INFO);
         }
-
     }
 
     /**
@@ -334,11 +342,11 @@ public class UserService implements UserServiceImp {
             User user=userRepostory.findByUserId(userId);
             if(user!=null)
             {
-                if(user.getPassword().equals(password))
+                if(user.getPassword().equals(MD5Util.getMd5(password)))
                 {
                     return new UserExecution(UserStateEnum.REPEAT);
                 }
-                user.setPassword(password);
+                user.setPassword(MD5Util.getMd5(password));
                 User newUser=userRepostory.saveAndFlush(user);
                 return new UserExecution(UserStateEnum.SUCCESS,user);
             }
@@ -364,6 +372,7 @@ public class UserService implements UserServiceImp {
         User users = userRepostory.findByNickName(nickname);
         return users==null;
     }
+
 
 
 }

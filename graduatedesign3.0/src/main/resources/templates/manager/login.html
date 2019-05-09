@@ -5,18 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
     <meta name="renderer" content="webkit"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-    <title>组织活动管理系统</title>
+    <title>组织活动审核系统</title>
     <link rel="stylesheet" th:href="@{/layui/css/layui.css}"/>
     <link th:href="@{/css/font-awesome.min.css}" rel="stylesheet" type="text/css"/>
     <link th:href="@{/css/common.css}" rel="stylesheet" type="text/css"/>
 <!--    <script th:src="@{/layui/jquery-3.2.1.min.js}"></script>-->
     <script th:src="@{/layui/layui.js}"></script>
-
+    <!--因为额外引入了webjars-locator，所以相关静态资源的引入可省略版本号便于升级-->
+    <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
+    <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/manager/login.js}"></script>
+    <style>
+    </style>
 </head>
 <body class="layui-layout-body">
 <div class="layui-layout layui-layout-admin">
 <!--头部模块-->
-<div th:replace="organization/common::head"></div>
+<div th:replace="manager/common::head"></div>
     <!--内容主体-->
     <div class="layui-body" id="body">
         <!-- 内容主体区域 -->
@@ -26,28 +31,26 @@
             <fieldset class="layui-elem-field layui-field-title">
                 <legend>欢迎登录</legend>
                 <div class="layui-field-box smaller">
-                    <form class="layui-form" th:action="@{/organization/login}" method="post">
+                    <form class="layui-form"  method="post">
                         <div class="layui-form-item">
-                            <label class="layui-form-label">组织邮箱：</label>
+                            <label class="layui-form-label">用户邮箱：</label>
                             <div class="layui-input-block">
-                                <input type="text" name="email" required="required" lay-verify="required"
-                                       placeholder="请输入组织邮箱"
+                                <input type="text" name="email" id="email" required="required" lay-verify="required email"
+                                       placeholder="请输入登录邮箱"
                                        autocomplete="off" class="layui-input"/>
                             </div>
                         </div>
-
                         <div class="layui-form-item">
                             <label class="layui-form-label">密码：</label>
                             <div class="layui-input-block">
-                                <input type="password" name="password" required="required" lay-verify="required"
+                                <input type="password" name="password" id="password" required="required" lay-verify="required"
                                        placeholder="请输入密码"
                                        autocomplete="off" class="layui-input"/>
                             </div>
                         </div>
-
                         <div class="layui-form-item">
                             <div class="layui-input-block">
-                                <button class="layui-btn layui-btn-lg layui-btn-radius layui-btn-danger"
+                                <button id="commit" class="layui-btn layui-btn-lg layui-btn-radius layui-btn-danger"
                                         lay-submit="lay-submit" lay-filter="formDemo">登录
                                 </button>
                                 <button type="reset" class="layui-btn layui-btn-lg layui-btn-radius layui-btn-primary">
@@ -63,7 +66,7 @@
 </div>
     </div>
 <!--底部-->
-<div th:replace="organization/common::foot"></div>
+<div th:replace="manager/common::foot"></div>
 </div>
 <script>
     //        <![CDATA[
@@ -76,6 +79,7 @@
     if (device.weixin || device.ios || device.android) {
         $("#cont").removeClass("smaller");
     }
+
     //        ]]>
 </script>
 <script>

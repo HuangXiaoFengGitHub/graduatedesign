@@ -252,7 +252,7 @@ public class UserController {
             map.put("errMsg","你未登录！！");
             return map;
         }
-        UserExecution userExecution=userService.updatePassword(user.getUserId(),password);
+        UserExecution userExecution=userService.updatePassword(user.getUserId(),newPassword);
         if (userExecution.getState()==1) {
             //登录成功 重定向到首页
             map.put("success",true);

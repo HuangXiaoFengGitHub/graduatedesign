@@ -11,36 +11,38 @@
         <div class="layui-logo">组织活动审核系统</div>
         <!-- 头部区域（可配合layui已有的水平导航） -->
         <ul class="layui-nav layui-layout-left">
-            <li class="layui-nav-item"><a href="">首页</a></li>
+            <li class="layui-nav-item"><a href="/manager/index">首页</a></li>
 <!--&lt;!&ndash;            <li class="layui-nav-item"><a href="">用户中心<span class="layui-badge">9</span></a></li>&ndash;&gt;-->
 <!--            <li class="layui-nav-item"><a href="">报名中心<span class="layui-badge">99</span></a></li>-->
             <li class="layui-nav-item"><a href="javascript:;">其它系统</a>
                 <dl class="layui-nav-child">
                     <dd>
-                        <a href="">活动管理</a>
+                        <a href="/organization/index">活动管理系统</a>
                     </dd>
                     <dd>
-                        <a href="">授权管理</a>
+                        <a href="/user/toLogin">用户子系统</a>
                     </dd>
                 </dl></li>
         </ul>
         <ul class="layui-nav layui-layout-right">
-            <li class="layui-nav-item"><a href="javascript:;"> 张晓丹 </a>
+            <li class="layui-nav-item">
+                <a href="javascript:;">
+                    <i class="fa fa-user-circle"></i>&nbsp;
+                    <span th:if="${session.manager == null}">请登陆</span>
+                    <span th:if="${session.manager != null}" th:text="'欢迎您!&nbsp;' + ${session.manager.userName}">请登陆</span>
+                </a>
                 <dl class="layui-nav-child">
-                    <dd>
-                        <a href="">基本资料</a>
-                    </dd>
-                    <dd>
-                        <a href="">隐私设置</a>
-                    </dd>
-                    <dd>
-                        <a href="">绑定设置</a>
-                    </dd>
-                    <dd>
-                        <a href="">实名认证</a>
-                    </dd>
-                </dl></li>
-            <li class="layui-nav-item"><a href="">退出</a></li>
+                    <!--如果用户已经登录,即用户session中存在organization属性，右上角显示用户名和用户资料-->
+                    <!--                    <dd th:if="${session.organization != null}"><a href="/organization/logout"><i class="fa fa-sign-out"></i> 退出登录</a></dd>-->
+                    <dd th:if="${session.manager != null}"><a href="/organization/messageDetail"><i class="fa fa-list"></i> 基本资料</a></dd>
+                    <dd th:if="${session.manager != null}"><a href="/organization/noticeManage/noticeDetail"><i class="fa fa-shopping-cart"></i> 隐私设置</a></dd>
+                    <dd th:if="${session.manager != null}"><a href="/organization/index"><i class="fa fa-shopping-cart"></i> 绑定设置</a></dd>
+                    <!--如果用户未登录,即用户session中不存在organization属性，右上角显示提示登录-->
+                    <dd th:if="${session.manager == null}"><a href="/manager/toLogin"><i class="fa fa-sign-in"></i> 登录</a></dd>
+                    <dd th:if="${session.manager == null}"><a th:href="@{/organization/toRegister}"><i class="fa fa-user-plus"></i> 注册</a></dd>
+                </dl>
+            </li>
+            <li class="layui-nav-item"><a href="/manager/logout">退出</a></li>
         </ul>
     </div>
 <!--侧边栏-->
@@ -51,10 +53,10 @@
                 <li class="layui-nav-item"><a href="javascript:;">我的审批</a>
                     <dl class="layui-nav-child">
                         <dd>
-                            <a href="javascript:;">待审批</a>
+                            <a href="/manager/frontend/tocheck">待审批</a>
                         </dd>
                         <dd>
-                            <a href="javascript:;">审批历史</a>
+                            <a href="/manager/activity/tocheck">审批历史</a>
                         </dd>
                     </dl>
                 </li>

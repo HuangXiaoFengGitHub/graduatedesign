@@ -18,8 +18,8 @@ public interface OrganizationImp {
     Organization findById(long id);
     List<Organization> findTop(long id);
     List<Organization> findParent(String name);
-    public void save(Organization organization);
-    Organization checkLogin(String email,String password);
+    public long save(Organization organization);
+    OrganizationExecution checkLogin(String email,String password);
     List<Organization> findOrganizationsByNameContain(String name);
     public OrganizationExecution register(Organization organization, MultipartFile organizationImg, MultipartFile wechatImg);
     //    public void addProfileImg(User user, CommonsMultipartFile profileImg);
@@ -27,4 +27,6 @@ public interface OrganizationImp {
     boolean isLike(long organizationId,User user);
     List<Tags> findAllTags(long organizationId);
     public OrganizationExecution findSearch(Organization model, int pageIndex, int pageSize, String search);
+    int countActivityByStatus(long organizationId,int status);
+    long countMyUsers(long organizationId);
 }

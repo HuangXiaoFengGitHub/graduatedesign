@@ -40,6 +40,11 @@ public class FileUtil {
 		personInfoImagePath = personInfoImagePath.replace("/", seperator);
 		return personInfoImagePath;
 	}
+	public static String getOrganizationInfoImagePath() {
+		String personInfoImagePath = "/upload/images/item/organizationinfo/";
+		personInfoImagePath = personInfoImagePath.replace("/", seperator);
+		return personInfoImagePath;
+	}
 
     /**
      * 店铺的相对路径，在图片根目录的基础上

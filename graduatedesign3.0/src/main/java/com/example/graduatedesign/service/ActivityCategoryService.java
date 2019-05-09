@@ -30,5 +30,9 @@ public class ActivityCategoryService implements ActivityCategoryServiceImp {
     {
         return activityCategoryRepository.findActivityCategoriesByParentId(id);
     }
+    public ActivityCategory findByName(String name)
+    {
+        return activityCategoryRepository.findByActivityCategoryName(name);
+    }
 
 }

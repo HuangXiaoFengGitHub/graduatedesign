@@ -11,6 +11,7 @@ import java.util.List;
 
 public interface OrganizationRepository extends JpaRepository<Organization,Long>, JpaSpecificationExecutor<Organization> {
 
+
     Organization findByOrganizationId(long id);
 
     List<Organization> findByParentId(long id);

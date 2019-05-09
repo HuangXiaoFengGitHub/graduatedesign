@@ -41,6 +41,10 @@ public class Activity {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="main_article_id")
     private  ActivityArticle activityMainArticle; //外键
+    private long minPrice; //活动经费下限
+    private long maxPrice; //活动经费上限
+    @Column(columnDefinition = "text")
+    private String checkComment;
     private Calendar startTime;
     private Calendar endTime;
     private Calendar createTime;

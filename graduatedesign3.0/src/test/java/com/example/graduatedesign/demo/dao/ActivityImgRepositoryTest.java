@@ -2,8 +2,10 @@ package com.example.graduatedesign.demo.dao;
 
 import com.example.graduatedesign.Model.Activity;
 import com.example.graduatedesign.Model.ActivityImg;
+import com.example.graduatedesign.Model.User;
 import com.example.graduatedesign.dao.ActivityImgRepository;
-import com.example.graduatedesign.util.MD5;
+import com.example.graduatedesign.dao.UserRepostory;
+import com.example.graduatedesign.util.MD5Util;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Test;
@@ -20,6 +22,8 @@ import java.util.List;
 public class ActivityImgRepositoryTest {
     @Autowired
     ActivityImgRepository activityImgRepository;
+    @Autowired
+    UserRepostory userRepostory;
     @Test
     public void test()
     {
@@ -31,8 +35,11 @@ public class ActivityImgRepositoryTest {
     @Test
     public void test2()
     {
-        String test= MD5.getMd5("a19960704");
+        String test= MD5Util.getMd5("iot");
+        User user=userRepostory.findByUserId(8L);
+        user.setPassword(test);
+        userRepostory.saveAndFlush(user);
         log.info(test);
-        log.info(MD5.getMd5(test));
+        log.info(MD5Util.getMd5(test));
     }
 }

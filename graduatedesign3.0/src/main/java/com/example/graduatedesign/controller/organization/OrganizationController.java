@@ -2,8 +2,10 @@ package com.example.graduatedesign.controller.organization;
 
 import com.example.graduatedesign.Model.*;
 import com.example.graduatedesign.Model.pojo.ResultBean;
+import com.example.graduatedesign.dto.OrganizationExecution;
 import com.example.graduatedesign.exception.LoginException;
 import com.example.graduatedesign.service.ManagerOrganizationService;
+import com.example.graduatedesign.service.OrganizationCategoryService;
 import com.example.graduatedesign.service.OrganizationService;
 import com.example.graduatedesign.service.UserService;
 import com.example.graduatedesign.util.HttpServletRequestUtil;
@@ -12,7 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,9 +34,29 @@ public class OrganizationController {
     ManagerOrganizationService managerOrganizationService;
     @Autowired
     UserService userService;
+    @Autowired
+    OrganizationCategoryService organizationCategoryService;
     @RequestMapping("/index")
-    public String index()
+    public String index(Model model,HttpServletRequest request)
     {
+        Organization organization=(Organization) request.getSession().getAttribute("organization");
+        if(organization!=null)
+        {
+            int activityNumber=organizationService.countAllActivity(organization.getOrganizationId());
+            int checking=organizationService.countActivityByStatus(organization.getOrganizationId(),1);
+            int going=organizationService.countActivityByStatus(organization.getOrganizationId(),5);
+            long like=organizationService.countMyUsers(organization.getOrganizationId());
+            model.addAttribute("activityNumber",activityNumber);
+            model.addAttribute("checking",checking);
+            model.addAttribute("going",going);
+            model.addAttribute("like",like);
+        }
+        else {
+            model.addAttribute("activityNumber",0);
+            model.addAttribute("checking",0);
+            model.addAttribute("going",0);
+            model.addAttribute("like",0);
+        }
         return "organization/organizationIndex";
     }
     @RequestMapping("/error")
@@ -45,7 +69,9 @@ public class OrganizationController {
     {
         //将父组织信息返回给前台
         List<Organization> topOrganizations=organizationService.findTop(0L);
+        List<OrganizationCategory> organizationCategories=organizationCategoryService.findAll();
         model.addAttribute("hxf2",topOrganizations);//通过model返回给前台
+        model.addAttribute("category",organizationCategories);
         return "organization/organizationRegister";
     }
     @RequestMapping("/toLogin")
@@ -59,10 +85,12 @@ public class OrganizationController {
                       HttpServletRequest request,
                       HttpServletResponse response) throws IOException {
         //
-        Organization organization = organizationService.checkLogin(email, password);
-        if (organization != null) {
+        log.info(email);
+        log.info(password);
+        OrganizationExecution organization = organizationService.checkLogin(email, password);
+        if (organization.getState() == 1) {
             //登录成功 重定向到首页
-            request.getSession().setAttribute("organization", organization);
+            request.getSession().setAttribute("organization", organization.getOrganization());
             response.sendRedirect("/organization/index");
         } else {
             log.info("登录失败");
@@ -72,12 +100,11 @@ public class OrganizationController {
         }
     }
     @RequestMapping("/register")
-    private String register(HttpServletRequest request, Organization organization)
+    private String register(HttpServletRequest request, Organization organization,@RequestParam("organizationImg2") MultipartFile organizationImg,@RequestParam("wechatImg2") MultipartFile wechatImg)
     {
         //获取父组织
         String parentName= HttpServletRequestUtil.getString(request,"parent2");//后台直接获取form的name值即可
         log.info(parentName);
-        log.info(organization.getPassword());
         List<Organization> parent=organizationService.findParent(parentName);
         if(parent.size()>0)
         {
@@ -85,20 +112,21 @@ public class OrganizationController {
         }
         //获取审核老师
         String teacher=HttpServletRequestUtil.getString(request,"teacher");
-        User teacher2=userService.findUserByName(teacher);
+        User teacher2=userService.findManagerByName(teacher);
+        log.info(teacher2.getUserDesc());
         if(teacher2!=null)
         {
             ManagerOrganization managerOrganization= ManagerOrganization.builder().organization(organization).user(teacher2).grade(1).createTime(Calendar.getInstance()).build();
             managerOrganizationService.save(managerOrganization);
         }
-        //获取微信公众号图片
-
-        //获取缩略图图片流
-
-        //设置插入时间
-        organization.setCreateTime(Calendar.getInstance());
+        //获取组织类别
+        String category=HttpServletRequestUtil.getString(request,"category");
+        OrganizationCategory organizationCategory=organizationCategoryService.findByName(category);
+        if(organizationCategory!=null)
+            organization.setOrganizationCategory(organizationCategory);
         //插入数据库
-        organizationService.save(organization);
+        log.info(organization.getPassword());
+        OrganizationExecution organizationExecution=organizationService.register(organization,organizationImg,wechatImg);
         return "redirect:/organization/toLogin";
     }
     /**

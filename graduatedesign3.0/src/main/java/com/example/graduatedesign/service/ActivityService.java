@@ -43,6 +43,8 @@ public class ActivityService implements ActivityServiceImp {
     ActivityImgRepository activityImgRepository;
     @Autowired
     UserActivityCommentRepository userActivityCommentRepository;
+    @Autowired
+    PlaceService placeService;
     public long save(Activity activity)
     {
         return activityRepository.saveAndFlush(activity).getActivityId();
@@ -184,7 +186,7 @@ public class ActivityService implements ActivityServiceImp {
      * @return
      */
     @Transactional
-    public List<Activity> findActivityByOrganization(Organization organization2)
+    public List<Activity> findActivityByOrganizationName(Organization organization2)
     {
         List<Organization> organizations=organizationRepository.findByOrganizationNameLike(organization2.getOrganizationName());
         List<Activity> list=new ArrayList<>();
@@ -195,20 +197,47 @@ public class ActivityService implements ActivityServiceImp {
         }
         return list;
     }
+
+    /**
+     * 找出该组织下的全部活动
+     * @param organizationId
+     * @return
+     */
+    public ActivityExecution findActivityByOrganization(long organizationId)
+    {
+        Organization organization = organizationRepository.findByOrganizationId(organizationId);
+        if(organization!=null)
+        {
+            List<Activity> activityList=activityRepository.findActivitiesByOrganizationOrderByStatusAsc(organization);
+            return new  ActivityExecution(ActivityState.SUCCESS,activityList);
+        }
+        else {
+            return new ActivityExecution(ActivityState.NULL_ACTIVITY_INFO);
+        }
+    }
     public List<Activity> findActivityByTime(Calendar startTime, Calendar endTime)
     {
         return activityRepository.findActivitiesByStartTimeAndEndTime(startTime,endTime);
     }
 
+    /**
+     * 为活动添加活动图片
+     * @param activity
+     * @param activityImg
+     * @param activityImgs
+     * @return
+     */
     @Transactional
     public ActivityExecution addActivity(Activity activity, MultipartFile activityImg, List<MultipartFile> activityImgs)
     {
         if (activity != null && activity.getOrganization() != null && activity.getOrganization().getOrganizationId() != 0) {
             activity.setCreateTime(Calendar.getInstance());
             activity.setUpdateTime(Calendar.getInstance());
-
             if (activityImg != null) {
                 addProfileImg(activity, activityImg);//添加缩略图
+            }
+            if (activityImgs != null && activityImgs.size() > 0) {
+                addProductImgs(activity, activityImgs); //批量添加商品详情图
             }
             try {
                 long effectedNum = activityRepository.saveAndFlush(activity).getActivityId();
@@ -217,9 +246,6 @@ public class ActivityService implements ActivityServiceImp {
                 }
             } catch (Exception e) {
                 throw new RuntimeException("创建活动失败:" + e.toString());
-            }
-            if (activityImgs != null && activityImgs.size() > 0) {
-                addProductImgs(activity, activityImgs); //批量添加商品详情图
             }
             return new ActivityExecution(ActivityState.SUCCESS, activity);
         } else {
@@ -261,6 +287,63 @@ public class ActivityService implements ActivityServiceImp {
             } catch (Exception e) {
                 throw new RuntimeException("创建商品详情图片失败:" + e.toString());
             }
+        }
+    }
+
+    /**
+     * 创建活动，创建申请界面
+     * @param organizationId
+     * @param activity
+     * @param place
+     * @param category
+     * @return
+     */
+    public ActivityExecution applyActivity(long organizationId,Activity activity,Place place,ActivityCategory category)
+    {
+        log.info("开始申请活动：");
+        if(place!=null && category!=null)
+        {
+            Organization organization=organizationRepository.findByOrganizationId(organizationId);
+            activity.setOrganization(organization);
+            activity.setPlace(place);
+            activity.setCategory(category);
+            activity.setStatus(1);//审核中
+            Activity activity1=activityRepository.saveAndFlush(activity);
+            return new ActivityExecution(ActivityState.SUCCESS,activity1);
+        }
+        else
+        {
+            return new ActivityExecution(ActivityState.NULL_ACTIVITY_INFO);
+        }
+    }
+    public ActivityExecution checkActivity(Activity activity,String isPass,String checkComment)
+    {
+        activity.setCheckComment(checkComment);
+        if(isPass.equals("是"))
+            activity.setStatus(3);//通过审核
+        else
+            activity.setStatus(2);
+        if(activityRepository.saveAndFlush(activity)!=null)
+            return new ActivityExecution(ActivityState.SUCCESS,activity);
+        else
+            return new ActivityExecution(ActivityState.FAILURE);
+    }
+    /**
+     * 获得通过审核的活动
+     * @param organizationId
+     * @param status
+     * @return
+     */
+    public ActivityExecution findCheckedActivity(long organizationId,int status)
+    {
+        Organization organization=organizationRepository.findByOrganizationId(organizationId);
+        if(organization!=null)
+        {
+            List<Activity> activityList=activityRepository.findActivitiesByOrganizationAndStatus(organization,status);
+            return new  ActivityExecution(ActivityState.SUCCESS,activityList);
+        }
+        else {
+            return new ActivityExecution(ActivityState.NULL_ACTIVITY_INFO);
         }
     }
 

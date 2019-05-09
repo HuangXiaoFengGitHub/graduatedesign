@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface OrganizationCategoryRepository extends JpaRepository<OrganizationCategory,Long> {
   OrganizationCategory findByOrganizationCategoryId(long id);
+  OrganizationCategory findByOrganizationCategoryName(String name);
 }

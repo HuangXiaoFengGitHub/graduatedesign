@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>组织管理活动首页</title>
+    <title>组织审核首页</title>
     <link th:href="@{/layui/css/layui.css}" rel="stylesheet" />
     <link rel="stylesheet" th:href="@{/css/bootstrap.css}">
     <!--因为额外引入了webjars-locator，所以相关静态资源的引入可省略版本号便于升级-->
@@ -12,9 +12,9 @@
 <body class="layui-layout-body">
 <div class="layui-layout layui-layout-admin">
 <!--头部-->
-<div th:replace="organization/common::head"></div>
+<div th:replace="manager/common::head"></div>
 <!--侧边栏-->
-<div th:replace="organization/common::side"></div>
+<div th:replace="manager/common::side"></div>
 <!--内容主体-->
 <div class="layui-body" id="body">
     <div class="layui-container">
@@ -23,38 +23,27 @@
     <div class="layui-row">
             <div class="layui-col-xs12 layui-col-sm6 layui-col-md5">
                 <div align="center">
-                    <h4 style="padding:8px">关注人数</h4>
-                    <p th:text="${like}">4</p>人
-                </div>
-
-            </div>
-            <div class="layui-col-xs12 layui-col-sm6 layui-col-md5">
-                <div align="center">
                     <h4 style="padding:8px">待审核</h4>
-                    <p th:text="${checking}">4</p>个
+                    <p th:text="${checking}">4</p>人
                 </div>
-            </div>
-    </div>
-    <div class="layui-row">
-            <div class="layui-col-xs12 layui-col-sm6 layui-col-md5">
-                <div align="center">
-                    <hr>正在进行</hr>
-                    <p class="color-red" th:text="${going}">4</p>个
-                </div>
-
             </div>
             <div class="layui-col-xs12 layui-col-sm6 layui-col-md5">
                 <div align="center">
-                <hr>已经举办</hr>
-                <p th:text="${activityNumber}">4</p>个
+                    <h4 style="padding:8px">已审核</h4>
+                    <p th:text="${checked}">4</p>个
+                </div>
+            </div>
+            <div class="layui-col-xs12 layui-col-sm6 layui-col-md5">
+                <div align="center">
+                <hr>我的组织</hr>
+                <p th:text="${organizationNumber}">4</p>个
                 </div>
             </div>
     </div>
     <div class="layui-row" style="margin-top: 50px;text-align: center;">
         <fieldset  class="layui-elem-field site-demo-button " style="margin-top: 30px;">
             <div>
-                <button class="layui-btn" id="apply">申请活动</button>
-                <button class="layui-btn layui-btn-normal" id="create">创建活动</button>
+                <button class="layui-btn" id="check">审核活动</button>
             </div>
         </fieldset>
     </div>
@@ -70,11 +59,8 @@
         var element = layui.element;
 
     });
-    $('#apply').click(function () {
-        window.location.href = '/organization/activityOperate/toApply';
-    });
-    $('#create').click(function () {
-        window.location.href = '/organization/activityOperate//toCompose';
+    $('#check').click(function () {
+        window.location.href = '/manager/frontend/tocheck';
     });
 
 </script>

@@ -11,4 +11,5 @@ public interface ActivityCategoryServiceImp {
     Optional<ActivityCategory> findById(long id);
     public List<ActivityCategory> findFirstLever();
     public List<ActivityCategory> findByParentId(long id);
+    ActivityCategory findByName(String name);
 }

@@ -2,6 +2,7 @@ package com.example.graduatedesign.service;
 
 
 import com.example.graduatedesign.Model.*;
+import com.example.graduatedesign.dao.ActivityRepository;
 import com.example.graduatedesign.dao.OrganizationRepository;
 import com.example.graduatedesign.dao.UserRepostory;
 import com.example.graduatedesign.dto.ActivityExecution;
@@ -11,8 +12,12 @@ import com.example.graduatedesign.enums.ActivityState;
 import com.example.graduatedesign.enums.OrganizationState;
 import com.example.graduatedesign.enums.UserStateEnum;
 import com.example.graduatedesign.service.serviceImp.OrganizationImp;
+import com.example.graduatedesign.util.FileUtil;
+import com.example.graduatedesign.util.ImageUtil;
+import com.example.graduatedesign.util.MD5Util;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,6 +25,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.AttributeOverride;
@@ -29,6 +35,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Set;
 
@@ -39,6 +46,8 @@ public class OrganizationService implements OrganizationImp {
     OrganizationRepository organizationRepository;
     @Autowired
     UserRepostory userRepostory;
+    @Autowired
+    ActivityRepository activityRepository;
     public Organization findById(long id)
     {
         return organizationRepository.findByOrganizationId(id);
@@ -51,13 +60,31 @@ public class OrganizationService implements OrganizationImp {
     {
         return organizationRepository.findByOrganizationName(name);
     }
-    public void save(Organization organization)
+    public long save(Organization organization)
     {
-        organizationRepository.save(organization);
+        return organizationRepository.saveAndFlush(organization).getOrganizationId();
     }
-    public Organization checkLogin(String email,String password)
+    /**
+     * 检查登录
+     * @param email
+     * @param password
+     * @return
+     */
+    public OrganizationExecution checkLogin(String email,String password)
     {
-        return organizationRepository.findByEmailAndPassword(email, password);
+        if(StringUtils.isNotBlank(email) && StringUtils.isNotBlank(password))
+        {
+            String password1=MD5Util.getMd5(password);
+            Organization organization=organizationRepository.findByEmailAndPassword(email,password1);
+            if(organization!=null)
+                return new OrganizationExecution(OrganizationState.SUCCESS,organization);
+            else
+                return new OrganizationExecution(OrganizationState.FAILURE);
+        }
+        else
+        {
+            return new OrganizationExecution(OrganizationState.NULL_ACTIVITY_INFO);
+        }
     }
     public List<Organization> findByOrganizationName(String organizationName){
         return organizationRepository.findByOrganizationName(organizationName);
@@ -72,7 +99,41 @@ public class OrganizationService implements OrganizationImp {
     }
     public OrganizationExecution register(Organization organization, MultipartFile organizationImg, MultipartFile wechatImg)
     {
-        return new OrganizationExecution(OrganizationState.SUCCESS,organization);
+            log.info("begin register:");
+            if (organization == null || organization.getPassword() == null) {
+                return new OrganizationExecution(OrganizationState.NULL_AUTH_INFO);
+            }
+            try {
+                organization.setCreateTime(Calendar.getInstance());
+                //   user.setPassword(MD5Util.getMd5(user.getPassword()));
+                if (organization != null) {
+                    organization.setEnableStatus(1);
+                    try {
+                        addProfileImg(organization, organizationImg);
+                        addwechatImg(organization,wechatImg);
+                    } catch (Exception e) {
+                        throw new RuntimeException("addUserProfileImg error: "
+                                + e.getMessage());
+                    }
+                }
+                //MD5加密
+                log.info(organization.getPassword());
+                String password= MD5Util.getMd5(organization.getPassword());
+                log.info(password);
+                organization.setPassword(password);
+                log.info(organization.getPassword());
+                long effectedNum = this.save(organization);
+                log.info("effectedNum:"+effectedNum+"");
+                if (effectedNum <= 0) {
+                    throw new RuntimeException("组织创建失败");
+                } else {
+                    return new OrganizationExecution(OrganizationState.SUCCESS,organization);
+                }
+            } catch (Exception e) {
+                throw new RuntimeException("insertUser error: "
+                        + e.getMessage());
+
+        }
     }
     //public void addProfileImg(User user, CommonsMultipartFile profileImg);
     public OrganizationExecution modifyUser(Organization organization,MultipartFile organizationImg,MultipartFile wechatImg){
@@ -162,6 +223,50 @@ public class OrganizationService implements OrganizationImp {
         else {
             return new OrganizationExecution(OrganizationState.NULL_ACTIVITY_INFO);
         }
+    }
+    private void addProfileImg(Organization organization,MultipartFile profileImg) {
+        if(profileImg==null)
+            return;
+        log.info("begin add profileImg:");
+        String dest = FileUtil.getOrganizationInfoImagePath();//"/upload/images/item/organizationinfo/";
+        String profileImgAddr = ImageUtil.generateThumbnail(profileImg, dest);//创建文件，获取文件名
+        organization.setOrganizationImg(profileImgAddr);
+        log.info(organization.getOrganizationImg());
+    }
+    private void addwechatImg(Organization organization,MultipartFile profileImg) {
+        if(profileImg==null)
+            return;
+        log.info("begin add profileImg:");
+        String dest = FileUtil.getOrganizationInfoImagePath();//"/upload/images/item/organizationinfo/";
+        String profileImgAddr = ImageUtil.generateThumbnail(profileImg, dest);//创建文件，获取文件名
+        organization.setWechatImg(profileImgAddr);
+        log.info(organization.getWechatImg());
+    }
+    public int countActivityByStatus(long organizationId,int status)
+    {
+        Organization organization=organizationRepository.findByOrganizationId(organizationId);
+        if(organization!=null)
+            return activityRepository.countActivityByOrganizationAndStatus(organization,status);
+        else
+            return 0;
+    }
+    public int countAllActivity(long organizationId)
+    {
+        Organization organization=organizationRepository.findByOrganizationId(organizationId);
+        if(organization!=null)
+            return activityRepository.countActivityByOrganization(organization);
+        else
+            return 0;
+    }
+    public long countMyUsers(long organizationId)
+    {
+        Organization organization=organizationRepository.findByOrganizationId(organizationId);
+        if(organization!=null) {
+            organization.setLikeCount(organization.getLikeUsers().size());
+            return organization.getLikeCount();
+        }
+        else
+            return 0;
     }
 
 }

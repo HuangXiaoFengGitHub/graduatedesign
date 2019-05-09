@@ -26,5 +26,9 @@ public class OrganizationCategoryService implements OrganizationCategoryServiceI
     {
         return organizationCategoryRepository.findById(id);
     }
+    public OrganizationCategory findByName(String name)
+    {
+        return organizationCategoryRepository.findByOrganizationCategoryName(name);
+    }
 
 }

@@ -10,4 +10,5 @@ public interface ActivityCategoryRepository extends JpaRepository<ActivityCatego
     ActivityCategory findByActivityCategoryId(long id);
     ActivityCategory findByActivityCategoryName(String name);
     List<ActivityCategory> findActivityCategoriesByParentId(long id);
+
 }

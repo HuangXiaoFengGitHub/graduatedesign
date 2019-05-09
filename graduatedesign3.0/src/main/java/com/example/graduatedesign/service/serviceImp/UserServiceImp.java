@@ -30,4 +30,5 @@ public interface UserServiceImp {
     OrganizationExecution addMyLikeOrganization(User user, long organizationId, boolean isAdd);
     boolean isLike(long activityId,User user);
     boolean isSignUp(long activityId,User user);
+    public User findManagerByName(String name);
 }

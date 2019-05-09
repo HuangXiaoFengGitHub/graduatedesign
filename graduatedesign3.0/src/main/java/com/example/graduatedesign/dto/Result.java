@@ -1,8 +1,12 @@
 package com.example.graduatedesign.dto;
 
+import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
+
 /**
  * 封装json对象，所有返回结果都使用它，数据迁移对象
  */
+@Data
 public class Result<T> {
 
 	private boolean success;// 是否成功标志
@@ -28,6 +32,7 @@ public class Result<T> {
 		this.errorMsg = errorMsg;
 		this.errorCode = errorCode;
 	}
+
 
 	public boolean isSuccess() {
 		return success;

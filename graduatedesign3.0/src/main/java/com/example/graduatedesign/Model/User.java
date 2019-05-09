@@ -14,7 +14,7 @@ import java.util.*;
 @EqualsAndHashCode(exclude = "likeOrganizations")
 @Getter
 @Setter
-@ToString
+@ToString(exclude = "managerOrganizations")
 public class User {
     //IdClass(User.class)
     @Id
@@ -45,7 +45,7 @@ public class User {
     private long joinCount;
     private Calendar createTime;
     private Calendar updateTime;
-    private int isManager;
+    private int isManager; // 1 是 0 不是
     private int isBan;
     private int isStudent;
     @OneToOne(cascade = CascadeType.ALL)

@@ -27,7 +27,7 @@ public interface ActivityServiceImp {
 
     public List<Activity> findActivityByState(ActivityState state);
 
-    public List<Activity> findActivityByOrganization(Organization organization);
+    public List<Activity> findActivityByOrganizationName(Organization organization);
 
     public List<Activity> findActivityByTime(Calendar startTime, Calendar endTime);
 
@@ -38,5 +38,6 @@ public interface ActivityServiceImp {
     public ActivityExecution findByCategoryPage(ActivityCategory activityCategory, int pageIndex, int pagesize);
 
     public ActivityExecution findSearch(Activity model,int pageIndex,int pageSize,String search);
+    public ActivityExecution findActivityByOrganization(long organizationId);
 
 }

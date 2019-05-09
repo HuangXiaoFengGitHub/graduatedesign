@@ -33,7 +33,7 @@
                 </a>
                 <dl class="layui-nav-child">
                     <!--如果用户已经登录,即用户session中存在organization属性，右上角显示用户名和用户资料-->
-                    <dd th:if="${session.organization != null}"><a href="/organization/logout"><i class="fa fa-sign-out"></i> 退出登录</a></dd>
+<!--                    <dd th:if="${session.organization != null}"><a href="/organization/logout"><i class="fa fa-sign-out"></i> 退出登录</a></dd>-->
                     <dd th:if="${session.organization != null}"><a href="/organization/messageDetail"><i class="fa fa-list"></i> 基本资料</a></dd>
                     <dd th:if="${session.organization != null}"><a href="/organization/noticeManage/noticeDetail"><i class="fa fa-shopping-cart"></i> 隐私设置</a></dd>
                     <dd th:if="${session.organization != null}"><a href="/organization/index"><i class="fa fa-shopping-cart"></i> 绑定设置</a></dd>
@@ -42,19 +42,7 @@
                     <dd th:if="${session.organization == null}"><a th:href="@{/organization/toRegister}"><i class="fa fa-user-plus"></i> 注册</a></dd>
                 </dl>
             </li>
-            <li class="layui-nav-item"><a href="javascript:;"> 勤工助学 </a>
-                <dl class="layui-nav-child">
-                    <dd>
-                        <a href="">基本资料</a>
-                    </dd>
-                    <dd>
-                        <a href="">隐私设置</a>
-                    </dd>
-                    <dd>
-                        <a href="">绑定设置</a>
-                    </dd>
-                </dl></li>
-            <li class="layui-nav-item"><a href="">退出</a></li>
+            <li class="layui-nav-item"><a href="/organization/logout">退出</a></li>
         </ul>
     </div>
 <!--侧边栏-->
@@ -65,13 +53,13 @@
                 <li class="layui-nav-item"><a href="javascript:;">活动管理</a>
                     <dl class="layui-nav-child">
                         <dd>
-                            <a href="/organization/activityOperate/toApply">活动申请</a>
+                            <a href="/organization/frontend/toApply">活动申请</a>
                         </dd>
                         <dd>
-                            <a href="/organization/activityOperate/toApply">申请历史</a>
+                            <a href="/organization/frontend/getApplyHistory">申请历史</a>
                         </dd>
                         <dd>
-                            <a href="/organization/activityOperate/toCompose">活动发布</a>
+                            <a href="/organization/frontend/tocompose">活动发布</a>
                         </dd>
                         <dd>
                             <a href="javascript:;">发布历史</a>

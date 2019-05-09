@@ -7,8 +7,19 @@
     <link rel="stylesheet" th:href="@{/layui/css/layui.css}"/>
     <link th:href="@{/css/font-awesome.min.css}" rel="stylesheet" type="text/css"/>
     <link th:href="@{/css/common.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/frontend/activitylist.css}" rel="stylesheet" type="text/css"/>
     <!--    <link rel="stylesheet" th:href="@{/css/bootstrap.css}">-->
     <script th:src="@{/layui/layui.js}"></script>
+    <!--因为额外引入了webjars-locator，所以相关静态资源的引入可省略版本号便于升级-->
+    <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
+    <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/manager/activityCompose.js}"></script>
+    <!--引入页面提示工具-->
+    <script th:src="@{/build/toastr.min.js}"></script>
+    <link th:href="@{/build/toastr.css}" rel="stylesheet" />
+    <link th:href="@{/build/toastr.min.css}" rel="stylesheet" />
+    <script type='text/javascript'
+            th:src='@{/js/common/commonutil.js}' charset='utf-8'></script>
 </head>
 <body class="layui-layout-body">
 <div class="layui-layout layui-layout-admin">
@@ -19,82 +30,167 @@
     <!--内容主体-->
     <div class="layui-body" id="body">
         <!-- 内容主体区域 -->
-        <div style="padding: 15px;">活动发布界面</div>
-        <hr class="layui-bg-black">
         <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
-            <legend>发布活动</legend>
+            <legend th:if="${activity!=null}">发布活动--<span th:text="${activity.activityName}"></span></legend>
+            <legend th:if="${activity==null}">发布活动 </legend>
         </fieldset>
-        <form class="layui-form" th:action="@{/organization/activityOperate/toCompose}" method="post">
-            <div class="layui-form-item">
-                <label class="layui-form-label">活动标题</label>
-                <div class="layui-input-block">
-                    <input type="text" name="activityName" id="activityName" lay-verify="title" autocomplete="off" placeholder="请输入标题" class="layui-input">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">作者</label>
-                <div class="layui-input-block">
-                    <input type="text" name="place" id="place" lay-verify="required" placeholder="请输入作者" autocomplete="off" class="layui-input">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">选择已经通过审核的活动</label>
-                <div class="layui-input-block">
-                    <select name="interest" lay-filter="aihao">
-                        <option value=""></option>
-                        <option value="0">志愿活动</option>
-                        <option value="1">学科竞赛</option>
-                        <option value="2">学术讲座</option>
-                        <option value="3">社团活动</option>
-                        <option value="4">兴趣爱好</option>
-                    </select>
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">活动标签</label>
-                <div class="layui-input-block">
-                    <input type="checkbox" name="like[write]" title="写作">
-                    <input type="checkbox" name="like[read]" title="阅读" checked="">
-                    <input type="checkbox" name="like[game]" title="游戏">
-                </div>
-            </div>
-            <div class="layui-form-item layui-form-text">
-                <label class="layui-form-label">编辑器</label>
-                <div class="layui-input-block">
-                    <textarea class="layui-textarea layui-hide" name="content" lay-verify="content" id="LAY_demo_editor"></textarea>
-                </div>
-            </div>
-            <div class="layui-form-item layui-form-text">
-                <label class="layui-form-label">摘要</label>
-                <div class="layui-input-block">
-                    <textarea placeholder="请输入内容" class="layui-textarea" id="activityDesc"></textarea>
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <div class="layui-input-block">
-                    <button id="commit" class="layui-btn layui-btn-lg layui-btn-radius layui-btn-danger"
-                            lay-submit="lay-submit" lay-filter="demo1">发布
-                    </button>
-                    <button type="reset" class="layui-btn layui-btn-lg layui-btn-radius layui-btn-primary">
-                        重置
-                    </button>
-                </div>
-            </div>
-<!--            <div>-->
-<!--                <button type="button" class="layui-btn" id="test3"><i class="layui-icon"></i>上传封面</button>-->
-<!--            </div>-->
-            <div class="layui-form-item">
-                <div class="layui-input-block">
-                    <div class="layui-upload">
-                        <button type="button" class="layui-btn" id="test1">上传图片</button>
-                        <div class="layui-upload-list">
-                            <img class="layui-upload-img" id="demo1">
-                            <p id="demoText"></p>
+        <div class="layui-card">
+            <div class="layui-card-header">请选择活动</div>
+            <div class="layui-card-body" id="checked-activity">
+                <div class="layui-row">
+                    <div class="layui-col-md4">
+                        <div class="select-wrap" >
+                            <select class="select" id="area-search"></select>
                         </div>
+<!--                        <div class="layui-form-item">-->
+<!--                            <label class="layui-form-label">选择已经通过审核的活动</label>-->
+<!--                            <div class="layui-input-block">-->
+<!--                                <select name="interest" lay-filter="aihao">-->
+<!--                                    <option value=""></option>-->
+<!--                                    <option value="0">志愿活动</option>-->
+<!--                                    <option value="1">学科竞赛</option>-->
+<!--                                    <option value="2">学术讲座</option>-->
+<!--                                    <option value="3">社团活动</option>-->
+<!--                                    <option value="4">兴趣爱好</option>-->
+<!--                                </select>-->
+<!--                            </div>-->
+<!--                        </div>-->
+                    </div>
+                    <div class="layui-col-md9">
+
                     </div>
                 </div>
+
             </div>
-        </form>
+        </div>
+        <!--活动发布需要提交的信息-->
+        <div class="layui-card">
+                <div class="layui-card-header">请补充活动发布信息</div>
+                <div class="layui-card-body">
+                    <!---表单信息-->
+                    <form class="layui-form" method="post">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">活动名称</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="activityName" id="activityName" lay-verify="title" autocomplete="off" placeholder="请输入标题" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">活动优先级</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="priority" id="priority" lay-verify="" autocomplete="off" placeholder="0--100" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">活动地点</label>
+                            <div class="layui-input-block">
+                                <!--                  //  <input type="text" name="place" id="place" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">-->
+                                <select name="placeString" id="placeString" lay-filter="aihao">
+                                    <option th:each="place:${places}" th:text="${place.placeName}">Name</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <div class="layui-inline">
+                                <label class="layui-form-label">开始时间</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="startTime1" id="startTime" lay-verify="required" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <label class="layui-form-label">结束时间</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="endTime1" id="endTime" lay-verify="required" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <div class="layui-inline">
+                                <label class="layui-form-label">活动经费</label>
+                                <div class="layui-input-inline" style="width: 100px;">
+                                    <input type="text" id="minPrice" name="minPrice" placeholder="￥" autocomplete="off" class="layui-input">
+                                </div>
+                                <div class="layui-form-mid">-</div>
+                                <div class="layui-input-inline" style="width: 100px;">
+                                    <input type="text" id="maxPrice" name="maxPrice" placeholder="￥" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">活动类型</label>
+                            <div class="layui-input-block">
+                                <select name="activityCategory" id="activityCategory" lay-filter="aihao">
+                                    <option th:each="category : ${categorys}" th:text="${category.activityCategoryName}">Name</option>
+                                    <!--                        <option value=""></option>-->
+                                    <!--                        <option value="0">志愿服务</option>-->
+                                    <!--                        <option value="1">学科竞赛</option>-->
+                                    <!--                        <option value="2">讲座</option>-->
+                                    <!--                        <option value="3">社团活动</option>-->
+                                    <!--                        <option value="4">兴趣爱好</option>-->
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">活动标签</label>
+                            <div class="layui-input-block">
+                                <select name="activityTag" id="activityTag" lay-filter="aihao">
+                                    <option th:each="category : ${categorys}" th:text="${category.activityCategoryName}">Name</option>
+                                    <!--                        <option value=""></option>-->
+                                    <!--                        <option value="0">志愿服务</option>-->
+                                    <!--                        <option value="1">学科竞赛</option>-->
+                                    <!--                        <option value="2">讲座</option>-->
+                                    <!--                        <option value="3">社团活动</option>-->
+                                    <!--                        <option value="4">兴趣爱好</option>-->
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item layui-form-text">
+                            <label class="layui-form-label">活动简介</label>
+                            <div class="layui-input-block">
+                                <textarea placeholder="请输入内容" class="layui-textarea" name="activityDesc" id="activityDesc"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item layui-form-text">
+                            <label class="layui-form-label">编辑器</label>
+                            <div class="layui-input-block">
+                                <textarea class="layui-textarea layui-hide" name="content" lay-verify="content" id="LAY_demo_editor"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <div class="layui-upload">
+                                    <button type="button" class="layui-btn" id="test1">活动缩略图</button>
+                                    <div class="layui-upload-list">
+                                        <img class="layui-upload-img" id="demo1">
+                                        <p id="demoText"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <button id="commit" class="layui-btn layui-btn-lg layui-btn-radius layui-btn-danger"
+                                        lay-submit="lay-submit" lay-filter="demo1">发布
+                                </button>
+                                <button type="reset" class="layui-btn layui-btn-lg layui-btn-radius layui-btn-primary">
+                                    重置
+                                </button>
+                            </div>
+                        </div>
+            <!--            <div>-->
+            <!--                <button type="button" class="layui-btn" id="test3"><i class="layui-icon"></i>上传封面</button>-->
+            <!--            </div>-->
+
+                    </form>
+                </div>
+        </div>
     </div>
     <!--底部-->
     <div th:replace="organization/common::foot"></div>
@@ -107,37 +203,40 @@
 
     });
 </script>
-<!--表单相关脚本-->
 <script>
+    //表单相关
     layui.use(['form', 'layedit', 'laydate'], function(){
         var form = layui.form
             ,layer = layui.layer
             ,layedit = layui.layedit
             ,laydate = layui.laydate;
 
-
-        //日期
+        //日期选择器
         laydate.render({
-            elem: '#date'
+            elem: '#startTime'
+            ,type:'datetime'
         });
         laydate.render({
-            elem: '#date1'
+            elem: '#endTime'
+            ,type:'datetime'
         });
-
         //创建一个编辑器
         var editIndex = layedit.build('LAY_demo_editor');
 
-        //自定义验证规则
+        //表单验证规则
         form.verify({
+            //验证活动名称
             title: function(value){
                 if(value.length < 5){
                     return '标题至少得5个字符啊';
                 }
             }
+            //密码
             ,pass: [
                 /^[\S]{6,12}$/
                 ,'密码必须6到12位，且不能出现空格'
             ]
+            //编辑器验证
             ,content: function(value){
                 layedit.sync(editIndex);
             }
@@ -162,6 +261,7 @@
 </script>
 <!--文件上传相关脚本-->
 <script>
+    //文件上传相关脚本
     layui.use('upload', function(){
         var $ = layui.jquery
             ,upload = layui.upload;
